@@ -290,6 +290,26 @@ body{
 .tabitem.active{color:var(--teal);}
 
 ::-webkit-scrollbar{width:0;height:0;}
+  .back-home{
+padding:20px;
+text-align:center;
+}
+
+.back-home a{
+display:inline-block;
+background:#0E6E63;
+color:white;
+padding:14px 28px;
+border-radius:14px;
+text-decoration:none;
+font-weight:700;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+transition:.2s;
+}
+
+.back-home a:hover{
+background:#0A4F47;
+}
 </style>
 </head>
 <body>
@@ -323,12 +343,22 @@ body{
 
   <div class="list" id="list"></div>
 
-  <div class="tabbar">
-    <div class="tabitem active">
-      <div class="ic">📋</div>
-      <div class="lb">藥物小卡</div>
-    </div>
-  </div>
+  <div class="back-home">
+
+<a href="index.html">
+🏠 返回學習平台
+</a>
+
+</div>
+
+<div class="tabbar">
+
+<div class="tabitem active">
+<div class="ic">📋</div>
+<div class="lb">藥物小卡</div>
+</div>
+
+</div>
 
 </div>
 
