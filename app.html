@@ -324,12 +324,33 @@ background:#0A4F47;
         <div class="brand-mark">🧰</div>
         <div class="brand-text">
           <h1>恢復室藥物快查</h1>
-          <p>PACU Drug Quick Reference</p>
-        </div>
-      </div>
-      <div class="count-pill" id="countPill">37 項</div>
+         <p>PACU Drug Quick Reference</p>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;">
+
+    <div class="count-pill" id="countPill">
+        37 項
     </div>
-    <div class="search-wrap">
+
+    <a href="index.html"
+       style="
+       text-decoration:none;
+       background:#4db6ac;
+       color:white;
+       padding:6px 10px;
+       border-radius:10px;
+       font-size:11px;
+       font-weight:600;">
+       🏠 首頁
+    </a>
+
+</div>
+
+</div>
+
+<div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input class="search-input" id="search" placeholder="搜尋藥名／適應症／副作用">
     </div>
@@ -571,13 +592,6 @@ document.getElementById("search").addEventListener("input", (e)=>{
 document.getElementById("countPill").textContent = drugs.length + " 項";
 render();
 </script>
-  <div class="back-home">
-
-<a href="index.html">
-🏠 返回學習平台
-</a>
-
-</div>
-
+ 
 </body>
 </html>
