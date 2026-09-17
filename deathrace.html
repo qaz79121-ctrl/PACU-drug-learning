@@ -1,1 +1,1936 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PACU DEATH RACE v3.9.5 — 藥命關頭</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #070708;
+    --slate-900: #0f172a;
+    --slate-950: #020617;
+    --slate-800: #1e293b;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-300: #cbd5e1;
+    --slate-200: #e2e8f0;
+    --red-600: #dc2626;
+    --red-500: #ef4444;
+    --red-950: #1a0000;
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --emerald-950: #022c22;
+    --yellow-500: #eab308;
+    --yellow-400: #facc15;
+    --amber-700: #b45309;
+    --blue-500: #3b82f6;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'Courier New', Courier, monospace;
+  }
+  html, body { min-height: 100vh; background: var(--bg); color: var(--slate-300); font-family: var(--font); font-size: 16px; }
+  body { padding: 24px; overflow-x: hidden; user-select: none; }
+  .wrap { max-width: 720px; margin: 0 auto; position: relative; }
 
+  /* ── Top Bar ── */
+  .topbar { display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--slate-900); padding-bottom: 20px; margin-bottom: 32px; }
+  .topbar-brand { display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .dot-pulse { width:12px; height:12px; border-radius:50%; background:var(--red-600); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .brand-text { font-size:.8rem; font-weight:900; letter-spacing:.35em; text-transform:uppercase; color:var(--slate-400); }
+  .brand-text span { color:var(--red-600); }
+  .topbar-icons { display:flex; align-items:center; gap:20px; }
+  .icon-btn { background:none; border:none; cursor:pointer; color:var(--slate-500); padding:4px; transition:color .2s; display:flex; }
+  .icon-btn:hover { color:var(--red-500); }
+  .icon-btn.settings:hover { color:var(--slate-300); }
+  svg { display:block; }
+
+  /* ── Cover ── */
+  #page-cover { animation: fadeIn .7s; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes zoomIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .cover-hero { text-align:center; padding: 32px 0; }
+  .cover-title { font-size: clamp(4rem, 14vw, 6rem); font-weight:900; letter-spacing:-.04em; color:#fff; font-style:italic; line-height:1; }
+  .cover-title .accent { color:var(--red-600); text-shadow: 0 0 30px rgba(220,38,38,.6); }
+  .cover-sub { font-size:.75rem; font-weight:700; color:var(--yellow-500); letter-spacing:.45em; text-transform:uppercase; margin-top:20px; font-style:italic; }
+  .cover-desc { color:var(--slate-400); font-size:.9rem; margin-top:14px; max-width:480px; margin-left:auto; margin-right:auto; line-height:1.7; }
+  .cover-box { max-width:520px; margin:48px auto 0; background:rgba(2,6,23,.8); padding:32px; border-radius:24px; border:1px solid var(--slate-900); box-shadow: 0 25px 50px rgba(0,0,0,.6); }
+  label.field-label { display:block; font-size:.75rem; font-weight:700; color:var(--slate-400); letter-spacing:.1em; margin-bottom:10px; }
+  input.name-input { width:100%; background:var(--slate-900); border:2px solid var(--slate-800); padding:18px; border-radius:16px; text-align:center; font-size:1.3rem; font-weight:700; color:#fff; outline:none; transition:border-color .2s; font-family:var(--font); }
+  input.name-input:focus { border-color:var(--red-600); }
+  input.name-input::placeholder { color:var(--slate-700); }
+  .btn-primary { width:100%; background:var(--red-600); color:#fff; border:none; padding:22px; border-radius:16px; font-weight:900; font-size:1.1rem; text-transform:uppercase; letter-spacing:.1em; cursor:pointer; margin-top:20px; display:flex; align-items:center; justify-content:center; gap:10px; transition:background .2s, transform .1s; box-shadow: 0 10px 30px rgba(220,38,38,.3); }
+  .btn-primary:hover:not(:disabled) { background:var(--red-500); }
+  .btn-primary:active:not(:disabled) { transform:scale(.98); }
+  .btn-primary:disabled { opacity:.2; cursor:not-allowed; }
+  .btn-ghost { width:100%; background:none; border:none; color:var(--slate-400); padding:14px; cursor:pointer; font-size:.8rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; transition:color .2s; }
+  .btn-ghost:hover { color:var(--yellow-500); }
+  .info-box { max-width:520px; margin:24px auto 0; background:rgba(2,6,23,.5); border:1px solid var(--slate-900); padding:18px 20px; border-radius:16px; display:flex; gap:14px; align-items:flex-start; font-size:.8rem; color:var(--slate-500); line-height:1.6; }
+  .info-box svg { color:#3b82f6; flex-shrink:0; margin-top:2px; }
+  .info-box strong { color:var(--slate-400); }
+
+  /* ── Monitor ── */
+  .monitor { background:var(--slate-950); border:2px solid var(--slate-800); border-radius:20px; padding:28px; font-family:var(--mono); box-shadow: 0 25px 50px rgba(0,0,0,.8); position:relative; overflow:hidden; margin-bottom:28px; }
+  .monitor-overlay { position:absolute; inset:0; pointer-events:none; transition:background .3s; border-radius:18px; }
+  .monitor-overlay.warn { background:rgba(220,38,38,.15); animation:pulse 1s infinite; }
+  .monitor-overlay.danger { background:rgba(220,38,38,.3); animation:pulse .5s infinite; }
+  .monitor-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; text-align:center; position:relative; z-index:1; }
+  .vital-label { font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .vital-label.hr { color:var(--red-500); }
+  .vital-label.spo2 { color:var(--emerald-400); }
+  .vital-label.rr { color:var(--yellow-400); }
+  .vital-label.bp { color:var(--slate-400); }
+  .vital-val { font-weight:700; line-height:1; }
+  .vital-val.big { font-size: clamp(3rem, 10vw, 4.5rem); }
+  .vital-val.med { font-size: clamp(2rem, 7vw, 3rem); }
+  .vital-val.red-color { color:var(--red-600); }
+  .vital-val.green-color { color:var(--emerald-500); }
+  .vital-val.yellow-color { color:var(--yellow-500); }
+  .vital-val.white-color { color:var(--slate-100); }
+  .vital-val.dead { color:var(--slate-500); animation:pulse 1s infinite; }
+  .vital-bottom { border-top:1px solid var(--slate-800); padding-top:18px; }
+  .timer-bar-wrap { margin-top:24px; background:var(--slate-900); height:10px; width:100%; border-radius:999px; overflow:hidden; position:relative; z-index:1; }
+  .timer-bar { height:100%; border-radius:999px; transition:width 1s linear, background .3s; }
+  .timer-bar.normal { background:var(--blue-500); }
+  .timer-bar.warning { background:var(--red-600); animation:pulse .8s infinite; }
+
+  /* ── Quiz ── */
+  #page-quiz { animation: fadeIn .5s; }
+  .question-card { background:var(--slate-900); border:1px solid var(--slate-800); border-radius:20px; padding:24px 28px; margin-bottom:28px; }
+  .question-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .case-badge { font-size:.65rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--red-500); display:flex; align-items:center; gap:8px; }
+  .ping { width:10px; height:10px; border-radius:50%; background:var(--red-500); animation: ping 1s infinite; }
+  @keyframes ping { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(2)} }
+  .time-badge { font-size:.8rem; font-weight:700; color:var(--slate-400); background:var(--slate-950); padding:6px 12px; border-radius:10px; border:1px solid var(--slate-800); }
+  .question-text { font-size:clamp(1rem, 3vw, 1.2rem); font-weight:900; color:#fff; line-height:1.6; }
+  .options-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .opt-btn { background:var(--slate-900); border:2px solid var(--slate-800); color:var(--slate-200); font-weight:900; font-size:clamp(.95rem, 3vw, 1.1rem); padding:22px 12px; border-radius:18px; cursor:pointer; min-height:100px; text-align:center; transition:border-color .15s, background .15s, transform .1s; display:flex; align-items:center; justify-content:center; font-family:var(--font); line-height:1.3; }
+  .opt-btn:hover:not(:disabled) { border-color:var(--slate-700); }
+  .opt-btn:active:not(:disabled) { transform:scale(.97); }
+  .opt-btn:disabled { cursor:not-allowed; }
+  .opt-btn.correct { background:#022c22; border-color:var(--emerald-500); color:var(--emerald-400); font-weight:900; animation:pulse .8s infinite; }
+  .opt-btn.wrong { background:#1a0000; border-color:var(--red-600); color:#f87171; font-weight:900; }
+  .opt-btn.faded { background:var(--slate-950); border-color:var(--slate-950); color:var(--slate-600); opacity:.5; }
+
+  .feedback-banner { margin-top:24px; padding:18px 22px; border-radius:18px; text-align:center; font-size:.9rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; animation: zoomIn .2s; }
+  .feedback-banner.correct { background:rgba(2,44,34,.4); border:1px solid #065f46; color:var(--emerald-400); }
+  .feedback-banner.wrong { background:rgba(26,0,0,.4); border:1px solid #7f1d1d; color:#f87171; }
+
+  /* ── Result ── */
+  #page-result { animation: zoomIn .5s; }
+  .result-icon-wrap { display:inline-block; padding:18px; border-radius:50%; background:var(--slate-900); border:1px solid var(--slate-800); margin-bottom:16px; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .bounce { animation: bounce 1.2s infinite; }
+  .result-grade-label { font-size:.65rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--slate-500); margin-bottom:6px; }
+  .result-status { font-size:clamp(2rem, 8vw, 3rem); font-weight:900; font-style:italic; letter-spacing:-.03em; }
+  .result-status.gold { color:var(--yellow-500); }
+  .result-status.red { color:var(--red-500); }
+  .result-score-box { background:rgba(15,23,42,.5); border:1px solid var(--slate-800); border-radius:24px; padding:28px; max-width:480px; margin:20px auto 0; }
+  .score-num { font-family:var(--mono); font-size:clamp(3.5rem, 14vw, 5rem); font-weight:700; color:#fff; letter-spacing:-.04em; line-height:1; }
+  .score-unit { font-size:1rem; color:var(--slate-500); font-weight:400; margin-left:4px; }
+  .result-msg { font-size:.9rem; color:var(--slate-400); line-height:1.7; margin-top:12px; font-weight:600; }
+  .wrong-list { background:var(--slate-950); border:1px solid var(--slate-900); border-radius:18px; padding:20px; }
+  .wrong-header { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.15em; color:var(--red-500); display:flex; align-items:center; gap:8px; padding-bottom:14px; border-bottom:1px solid var(--slate-900); margin-bottom:14px; }
+  .wrong-scroll { max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+  .wrong-scroll::-webkit-scrollbar { width:4px; }
+  .wrong-scroll::-webkit-scrollbar-thumb { background:var(--slate-700); border-radius:999px; }
+  .wrong-item { background:rgba(15,23,42,.4); padding:14px 16px; border-radius:14px; border:1px solid var(--slate-900); font-size:.8rem; }
+  .wrong-item .q-text { color:var(--slate-300); line-height:1.6; margin-bottom:10px; font-weight:500; }
+  .wrong-item .ans-row { display:flex; gap:20px; padding-top:10px; border-top:1px solid rgba(15,23,42,.5); }
+  .ans-row .wrong-ans { color:#f87171; }
+  .ans-row .correct-ans { color:var(--emerald-400); font-weight:700; }
+  .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .btn-secondary { background:var(--slate-900); border:none; color:var(--slate-300); padding:18px; border-radius:18px; font-weight:900; font-size:.8rem; text-transform:uppercase; letter-spacing:.1em; cursor:pointer; transition:background .2s, transform .1s; font-family:var(--font); }
+  .btn-secondary:hover { background:var(--slate-800); }
+  .btn-secondary:active { transform:scale(.97); }
+
+  /* ── Leaderboard ── */
+  #page-leaderboard { animation: slideUp .5s; }
+  .page-header { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+  .back-btn { background:none; border:none; cursor:pointer; color:var(--slate-400); padding:8px; border-radius:50%; transition:background .2s, color .2s; display:flex; }
+  .back-btn:hover { background:var(--slate-900); color:#fff; }
+  .page-title { font-size:1.2rem; font-weight:900; color:#fff; text-transform:uppercase; font-style:italic; letter-spacing:-.02em; display:flex; align-items:center; gap:10px; }
+  .lb-box { background:rgba(2,6,23,.8); border:1px solid var(--slate-900); border-radius:24px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,.5); }
+  .lb-empty { padding:60px; text-align:center; color:var(--slate-600); font-style:italic; }
+  .lb-scroll { max-height:520px; overflow-y:auto; }
+  .lb-scroll::-webkit-scrollbar { width:4px; }
+  .lb-scroll::-webkit-scrollbar-thumb { background:var(--slate-700); border-radius:999px; }
+  .lb-row { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid rgba(15,23,42,.6); transition:background .15s; }
+  .lb-row:hover { background:rgba(15,23,42,.3); }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-left { display:flex; align-items:center; gap:16px; }
+  .rank-badge { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:.8rem; flex-shrink:0; }
+  .rank-badge.r1 { background:var(--yellow-500); color:#000; box-shadow:0 4px 12px rgba(234,179,8,.3); }
+  .rank-badge.r2 { background:#cbd5e1; color:#000; }
+  .rank-badge.r3 { background:var(--amber-700); color:#fff; }
+  .rank-badge.rn { background:var(--slate-900); color:var(--slate-500); }
+  .lb-name { font-weight:700; font-size:1rem; color:var(--slate-200); }
+  .lb-status { font-size:.7rem; color:var(--slate-500); margin-top:2px; }
+  .lb-score-wrap { text-align:right; }
+  .lb-score-label { font-size:.6rem; text-transform:uppercase; font-weight:700; color:var(--slate-500); letter-spacing:.1em; }
+  .lb-score-val { font-size:1.2rem; font-weight:900; color:var(--red-500); }
+  .btn-full { width:100%; background:var(--slate-900); border:none; color:var(--slate-300); padding:18px; border-radius:18px; font-weight:700; font-size:.75rem; text-transform:uppercase; letter-spacing:.2em; cursor:pointer; margin-top:16px; transition:background .2s; font-family:var(--font); }
+  .btn-full:hover { background:var(--slate-800); }
+
+  /* ── Admin Login ── */
+  #page-login { animation: fadeIn .5s; }
+  .login-box { max-width:440px; margin:0 auto; background:var(--slate-950); border:1px solid var(--slate-900); border-radius:24px; padding:32px; }
+  input.pass-input { width:100%; background:var(--slate-900); border:1px solid var(--slate-800); padding:18px; border-radius:18px; text-align:center; font-size:1.5rem; font-family:var(--mono); color:#fff; letter-spacing:.3em; outline:none; transition:border-color .2s; }
+  input.pass-input:focus { border-color:var(--red-600); }
+  .feedback-msg { font-size:.85rem; text-align:center; padding:12px; border-radius:12px; margin-top:12px; }
+  .feedback-msg.error { background:rgba(26,0,0,.5); color:#f87171; }
+  .feedback-msg.success { background:rgba(2,44,34,.5); color:var(--emerald-400); }
+
+  /* ── Admin Panel ── */
+  #page-admin { animation: slideUp .5s; }
+  .admin-toolbar { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
+  .btn-outline-amber { background:rgba(180,83,9,.2); border:1px solid rgba(180,83,9,.3); color:#f59e0b; padding:10px 16px; border-radius:12px; font-size:.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; font-family:var(--font); }
+  .btn-outline-amber:hover { background:rgba(180,83,9,.3); }
+  .btn-red-sm { background:var(--red-600); border:none; color:#fff; padding:10px 16px; border-radius:12px; font-size:.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; box-shadow:0 4px 12px rgba(220,38,38,.3); font-family:var(--font); }
+  .btn-red-sm:hover { background:var(--red-500); }
+  .admin-count { font-size:.75rem; font-weight:700; color:var(--slate-500); text-transform:uppercase; letter-spacing:.1em; }
+  .q-list { background:rgba(2,6,23,.9); border:1px solid var(--slate-900); border-radius:24px; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,.5); }
+  .q-scroll { max-height:520px; overflow-y:auto; }
+  .q-scroll::-webkit-scrollbar { width:4px; }
+  .q-scroll::-webkit-scrollbar-thumb { background:var(--slate-700); border-radius:999px; }
+  .q-row { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:18px 20px; border-bottom:1px solid var(--slate-900); transition:background .15s; }
+  .q-row:hover { background:rgba(15,23,42,.3); }
+  .q-row:last-child { border-bottom:none; }
+  .q-drug-tag { font-size:.65rem; font-weight:700; padding:3px 8px; border-radius:6px; background:var(--slate-900); border:1px solid var(--slate-800); color:var(--yellow-500); display:inline-block; }
+  .q-spec { font-size:.65rem; color:var(--slate-500); margin-left:6px; }
+  .q-text-row { font-size:.8rem; font-weight:500; color:var(--slate-300); line-height:1.6; margin-top:6px; }
+  .q-answer { font-size:.75rem; font-weight:700; color:var(--emerald-500); margin-top:4px; }
+  .q-actions { display:flex; gap:6px; flex-shrink:0; }
+  .q-act-btn { background:none; border:none; padding:7px; border-radius:10px; cursor:pointer; color:var(--slate-400); transition:color .2s, background .2s; display:flex; }
+  .q-act-btn:hover.edit { color:#fff; background:var(--slate-800); }
+  .q-act-btn:hover.del { color:var(--red-500); background:var(--slate-800); }
+
+  /* ── Modal ── */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(4px); z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto; }
+  .modal-box { background:var(--slate-950); border:1px solid var(--slate-900); border-radius:24px; max-width:540px; width:100%; padding:28px; position:relative; animation: zoomIn .2s; margin:auto; }
+  .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer; color:var(--slate-500); padding:4px; transition:color .2s; display:flex; }
+  .modal-close:hover { color:#fff; }
+  .modal-title { font-size:1.1rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:8px; padding-bottom:16px; border-bottom:1px solid var(--slate-900); margin-bottom:16px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group.full { grid-column:1/-1; }
+  .form-label { font-size:.65rem; font-weight:700; color:var(--slate-500); text-transform:uppercase; letter-spacing:.08em; }
+  .form-input, .form-textarea, .form-select { background:var(--slate-900); border:1px solid var(--slate-800); border-radius:10px; padding:10px 12px; color:#fff; font-family:var(--font); font-size:.85rem; outline:none; transition:border-color .2s; width:100%; }
+  .form-input:focus, .form-textarea:focus, .form-select:focus { border-color:var(--red-600); }
+  .form-input.answer-input { color:var(--yellow-500); font-weight:700; }
+  .form-textarea { resize:none; line-height:1.6; }
+  .form-select { cursor:pointer; }
+  .form-hint { font-size:.65rem; color:var(--slate-500); margin-top:2px; }
+  .form-section-label { font-size:.65rem; font-weight:700; color:var(--slate-500); text-transform:uppercase; letter-spacing:.15em; }
+  .vitals-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .vitals-input { background:var(--slate-900); border:1px solid var(--slate-800); border-radius:8px; padding:8px 4px; color:#fff; font-family:var(--mono); font-size:.85rem; text-align:center; outline:none; width:100%; }
+  .vitals-input:focus { border-color:var(--red-600); }
+  .vitals-label { font-size:.6rem; color:var(--slate-500); text-align:center; margin-bottom:4px; }
+  .form-btns { display:flex; gap:12px; padding-top:16px; border-top:1px solid var(--slate-900); }
+  .btn-save { flex:1; background:var(--red-600); border:none; color:#fff; padding:14px; border-radius:14px; font-weight:700; font-size:.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .2s; font-family:var(--font); }
+  .btn-save:hover { background:var(--red-500); }
+  .btn-cancel { flex:1; background:var(--slate-900); border:none; color:var(--slate-400); padding:14px; border-radius:14px; font-weight:700; font-size:.85rem; cursor:pointer; transition:background .2s; font-family:var(--font); }
+  .btn-cancel:hover { background:var(--slate-800); }
+  .confirm-modal { text-align:center; padding:8px 0; }
+  .confirm-modal h3 { font-size:1.1rem; font-weight:700; color:#fff; margin-top:16px; }
+  .confirm-modal p { font-size:.8rem; color:var(--slate-500); margin-top:8px; line-height:1.6; }
+
+  /* ── Backup Page ── */
+  #page-backup { animation: slideUp .5s; }
+  .backup-page-header { margin-bottom: 32px; }
+  .backup-page-title { font-size:1.6rem; font-weight:900; color:#fff; letter-spacing:-.02em; }
+  .backup-page-sub { font-size:.85rem; color:var(--slate-500); margin-top:6px; }
+
+  .bk-step { border-radius:20px; overflow:hidden; margin-bottom:20px; }
+
+  /* Step header bar */
+  .bk-step-head { display:flex; align-items:center; gap:14px; padding:18px 22px; }
+  .bk-step-head.export { background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.25); border-bottom:none; border-radius:20px 20px 0 0; }
+  .bk-step-head.import { background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-bottom:none; border-radius:20px 20px 0 0; }
+  .bk-step-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .bk-step-icon.green { background:rgba(16,185,129,.2); color:var(--emerald-400); }
+  .bk-step-icon.blue { background:rgba(59,130,246,.2); color:#60a5fa; }
+  .bk-step-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.15em; color:var(--slate-500); }
+  .bk-step-name { font-size:1.1rem; font-weight:900; color:#fff; margin-top:2px; }
+
+  /* Step body */
+  .bk-step-body { background:var(--slate-900); border:1px solid var(--slate-800); border-radius:0 0 20px 20px; padding:22px; }
+  .bk-desc { font-size:.85rem; color:var(--slate-400); line-height:1.7; margin-bottom:16px; }
+  .bk-include-list { list-style:none; margin-bottom:20px; display:flex; flex-direction:column; gap:8px; }
+  .bk-include-list li { display:flex; align-items:center; gap:10px; font-size:.82rem; color:var(--slate-300); }
+  .bk-include-list li svg { color:var(--emerald-500); flex-shrink:0; }
+
+  /* Big action buttons */
+  .bk-btn-export { width:100%; background:var(--emerald-500); border:none; color:#fff; padding:18px 24px; border-radius:14px; font-size:1rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:background .2s, transform .1s; font-family:var(--font); box-shadow:0 6px 24px rgba(16,185,129,.3); }
+  .bk-btn-export:hover { background:#059669; }
+  .bk-btn-export:active { transform:scale(.98); }
+
+  .bk-import-zone { border:2px dashed var(--slate-700); border-radius:14px; padding:28px 20px; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; position:relative; margin-bottom:14px; }
+  .bk-import-zone:hover, .bk-import-zone.drag-over { border-color:#3b82f6; background:rgba(59,130,246,.07); }
+  .bk-import-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .bk-import-zone-icon { color:#3b82f6; margin-bottom:10px; }
+  .bk-import-zone-text { font-size:.9rem; font-weight:700; color:#3b82f6; }
+  .bk-import-zone-sub { font-size:.72rem; color:var(--slate-500); margin-top:5px; }
+
+  /* Notice */
+  .bk-notice { display:flex; align-items:flex-start; gap:8px; font-size:.78rem; color:#f59e0b; line-height:1.6; }
+  .bk-notice svg { flex-shrink:0; margin-top:1px; }
+
+  /* Preview card after file selected */
+  .bk-preview { background:var(--slate-950); border:1px solid var(--slate-800); border-radius:12px; padding:14px 16px; font-size:.8rem; color:var(--slate-400); line-height:1.9; margin-bottom:14px; }
+  .bk-preview strong { color:#fff; }
+  .bk-preview.error { border-color:#7f1d1d; color:#f87171; background:rgba(26,0,0,.4); }
+  .bk-preview.ok { border-color:#065f46; }
+
+  /* Import mode toggle */
+  .bk-mode-row { display:flex; gap:10px; margin-bottom:14px; }
+  .bk-mode-btn { flex:1; padding:11px 8px; border-radius:12px; border:1.5px solid var(--slate-700); background:var(--slate-950); color:var(--slate-400); font-size:.75rem; font-weight:700; cursor:pointer; text-align:center; transition:all .15s; font-family:var(--font); line-height:1.5; }
+  .bk-mode-btn.active { border-color:#3b82f6; background:rgba(59,130,246,.12); color:#60a5fa; }
+  .bk-replace-warn { font-size:.75rem; color:#f59e0b; padding:10px 14px; background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.2); border-radius:10px; margin-bottom:14px; display:none; line-height:1.6; }
+  .bk-replace-warn.show { display:block; }
+
+  .bk-btn-import { width:100%; background:#2563eb; border:none; color:#fff; padding:16px 24px; border-radius:14px; font-size:.95rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:background .2s, transform .1s; font-family:var(--font); box-shadow:0 6px 20px rgba(37,99,235,.3); }
+  .bk-btn-import:hover:not(:disabled) { background:#1d4ed8; }
+  .bk-btn-import:active:not(:disabled) { transform:scale(.98); }
+  .bk-btn-import:disabled { opacity:.35; cursor:not-allowed; }
+
+  /* small inline button for toolbar */
+  .btn-outline-blue { background:rgba(59,130,246,.15); border:1px solid rgba(59,130,246,.3); color:#60a5fa; padding:10px 16px; border-radius:12px; font-size:.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; font-family:var(--font); }
+  .btn-outline-blue:hover { background:rgba(59,130,246,.25); }
+  .btn-outline-green { background:rgba(16,185,129,.15); border:1px solid rgba(16,185,129,.3); color:#34d399; padding:10px 16px; border-radius:12px; font-size:.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; font-family:var(--font); }
+  .btn-outline-green:hover { background:rgba(16,185,129,.25); }
+  .btn-outline-red { background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#f87171; padding:10px 16px; border-radius:12px; font-size:.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; font-family:var(--font); }
+  .btn-outline-red:hover { background:rgba(220,38,38,.25); }
+
+  /* ── Score Admin Page ── */
+  #page-scoreadmin { animation: slideUp .5s; }
+  .sa-toolbar { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  .sa-row { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--slate-900); gap:12px; }
+  .sa-row:last-child { border-bottom:none; }
+  .sa-row:hover { background:rgba(15,23,42,.3); }
+
+  /* ── Helpers ── */
+  .mt-8 { margin-top:8px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-24 { margin-top:24px; }
+  .mt-32 { margin-top:32px; }
+  .space-y-16 > * + * { margin-top:16px; }
+  .space-y-24 > * + * { margin-top:24px; }
+  .hidden { display:none !important; }
+  .text-center { text-align:center; }
+
+  @media (max-width:480px) {
+    body { padding:14px; }
+    .options-grid { grid-template-columns:1fr 1fr; gap:10px; }
+    .opt-btn { min-height:80px; padding:14px 8px; font-size:.9rem; }
+    .form-row { grid-template-columns:1fr; }
+    .vitals-grid { grid-template-columns:repeat(2,1fr); }
+    .result-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand" id="go-cover">
+      <div class="dot-pulse"></div>
+      <span class="brand-text">PACU <span>DEATH RACE v3.9.5</span></span>
+    </div>
+    <div class="topbar-icons">
+      <button class="icon-btn" id="mute-btn" title="靜音切換">
+        <svg id="icon-sound" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <svg id="icon-mute" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+      <button class="icon-btn settings" id="admin-btn" title="管理後台">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- PAGE: COVER -->
+  <div id="page-cover">
+    <div class="cover-hero">
+      <h2 class="cover-title">藥命<span class="accent">關頭</span></h2>
+      <div class="cover-sub">33-Case Survival Challenge</div>
+      <p class="cover-desc">這是 PACU 復甦室專用的高擬真臨床藥物計量極速考驗。在心搏驟停前，請精確調配針劑劑量！</p>
+    </div>
+    <div class="cover-box">
+      <label class="field-label">護理師姓名 (登錄英雄榜)</label>
+      <input type="text" id="nurse-name" class="name-input" placeholder="請輸入您的姓名..." maxlength="30" autocomplete="off" />
+      <button class="btn-primary" id="start-btn" disabled>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        開始挑戰 STAT
+      </button>
+      <button class="btn-ghost" id="lb-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        瀏覽護理榮譽英雄榜
+      </button>
+    </div>
+    <div class="info-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div><strong>挑戰規則</strong>：共須作答 33 題，每題限時 60 秒。作答錯誤或超時將導致病人 Vital Signs 歸零。</div>
+    </div>
+    <div class="info-box hidden" id="no-questions-warning" style="border-color:#7f1d1d;background:rgba(26,0,0,.4)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div style="color:#f87171"><strong>題庫目前為空</strong>：請先至管理後台新增題目，或將題庫重置為預設值後再開始挑戰。</div>
+    </div>
+  </div>
+
+  <!-- PAGE: QUIZ -->
+  <div id="page-quiz" class="hidden">
+    <div class="monitor" id="monitor">
+      <div class="monitor-overlay" id="monitor-overlay"></div>
+      <div class="monitor-grid">
+        <div>
+          <div class="vital-label hr">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="pulse-anim" style="animation:pulse 1s infinite"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            HR (心率)
+          </div>
+          <div class="vital-val big red-color" id="v-hr">80</div>
+        </div>
+        <div>
+          <div class="vital-label spo2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            SpO2 (血氧)
+          </div>
+          <div class="vital-val big green-color" id="v-spo2">98%</div>
+        </div>
+        <div class="vital-bottom">
+          <div class="vital-label rr">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+            RR (呼吸)
+          </div>
+          <div class="vital-val med yellow-color" id="v-rr">16</div>
+        </div>
+        <div class="vital-bottom">
+          <div class="vital-label bp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            NBP (血壓)
+          </div>
+          <div class="vital-val med white-color" id="v-bp">120/80</div>
+        </div>
+      </div>
+      <div class="timer-bar-wrap">
+        <div class="timer-bar normal" id="timer-bar"></div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-meta">
+        <div class="case-badge">
+          <div class="ping"></div>
+          <span id="case-label">PACU Case 1 / 33</span>
+        </div>
+        <div class="time-badge">倒數 <span id="time-left">60</span> 秒</div>
+      </div>
+      <div class="question-text" id="question-text">問題載入中...</div>
+    </div>
+
+    <div class="options-grid" id="options-grid"></div>
+    <div id="feedback-banner" class="hidden"></div>
+  </div>
+
+  <!-- PAGE: RESULT -->
+  <div id="page-result" class="hidden space-y-24">
+    <div class="text-center">
+      <div class="result-icon-wrap">
+        <span id="result-icon"></span>
+      </div>
+      <div class="result-grade-label">臨床評估等級</div>
+      <div class="result-status" id="result-status">—</div>
+      <div class="result-score-box">
+        <div><span class="score-num" id="result-score">0</span><span class="score-unit">分</span></div>
+        <div class="result-msg" id="result-msg"></div>
+      </div>
+    </div>
+    <div id="wrong-section" class="hidden wrong-list">
+      <div class="wrong-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="wrong-header-text">錯題與劑量檢討</span>
+      </div>
+      <div class="wrong-scroll" id="wrong-list"></div>
+    </div>
+    <div class="result-grid">
+      <button class="btn-primary" id="retry-btn" style="margin-top:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.94"/></svg>
+        再次挑戰 STAT
+      </button>
+      <button class="btn-secondary" id="result-home-btn">返回主選單</button>
+    </div>
+  </div>
+
+  <!-- PAGE: LEADERBOARD -->
+  <div id="page-leaderboard" class="hidden space-y-24">
+    <div class="page-header">
+      <button class="back-btn" id="lb-back-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 class="page-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        PACU 頂尖救治英雄榜
+      </h2>
+    </div>
+    <div class="lb-box">
+      <div id="lb-content"></div>
+    </div>
+    <button class="btn-full" id="lb-home-btn">返回首頁</button>
+  </div>
+
+  <!-- PAGE: LOGIN -->
+  <div id="page-login" class="hidden space-y-24">
+    <div class="page-header">
+      <button class="back-btn" id="login-back-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 class="page-title">管理者登入</h2>
+    </div>
+    <div class="login-box">
+      <label class="field-label">請輸入後台維護密碼</label>
+      <input type="password" id="pass-input" class="pass-input" placeholder="Password..." />
+      <div id="login-feedback" class="hidden feedback-msg"></div>
+      <button class="btn-primary" id="login-btn" style="margin-top:16px">驗證並進入後台</button>
+    </div>
+  </div>
+
+  <!-- PAGE: ADMIN -->
+  <div id="page-admin" class="hidden space-y-16">
+    <div class="page-header" style="justify-content:space-between;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="back-btn" id="admin-back-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-title" style="font-size:1.1rem">題庫維護管理</h2>
+      </div>
+      <div class="admin-toolbar">
+        <button class="btn-outline-amber" id="reset-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.94"/></svg>
+          重置
+        </button>
+        <button class="btn-outline-green" id="scoreadmin-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          排行榜管理
+        </button>
+        <button class="btn-outline-blue" id="backup-page-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+          備份移轉
+        </button>
+        <button class="btn-red-sm" id="add-q-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新增
+        </button>
+      </div>
+    </div>
+    <div id="admin-feedback" class="hidden feedback-msg"></div>
+    <div class="admin-count" id="admin-count">當前線上題庫容量：— 題 (隨機抽選 33 題進行挑戰)</div>
+    <div class="q-list">
+      <div class="q-scroll" id="q-list-content"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: SCORE ADMIN (排行榜管理) -->
+  <div id="page-scoreadmin" class="hidden space-y-16">
+    <div class="page-header" style="justify-content:space-between;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="back-btn" id="scoreadmin-back-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-title" style="font-size:1.1rem">排行榜資料管理</h2>
+      </div>
+    </div>
+    <div class="sa-toolbar">
+      <button class="btn-outline-blue" id="sa-export-csv-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下載 CSV
+      </button>
+      <button class="btn-outline-red" id="sa-clear-all-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        清空全部
+      </button>
+      <button class="btn-red-sm" id="sa-add-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        新增成績
+      </button>
+    </div>
+    <div id="scoreadmin-feedback" class="hidden feedback-msg"></div>
+    <div class="admin-count" id="scoreadmin-count">當前英雄榜共 — 筆紀錄</div>
+    <div class="q-list">
+      <div class="q-scroll" id="sa-list-content"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: BACKUP -->
+  <div id="page-backup" class="hidden" style="padding-bottom:40px">
+  <div class="backup-page-header">
+    <div class="page-header" style="margin-bottom:8px">
+      <button class="back-btn" id="backup-back-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div>
+        <div class="backup-page-title">資料備份與移轉</div>
+        <div class="backup-page-sub">將您的題庫與成績資料移轉到其他裝置或進行備份保存</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: EXPORT -->
+  <div class="bk-step">
+    <div class="bk-step-head export">
+      <div class="bk-step-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div>
+        <div class="bk-step-label">Step 1</div>
+        <div class="bk-step-name">匯出備份檔案</div>
+      </div>
+    </div>
+    <div class="bk-step-body">
+      <p class="bk-desc">點擊下方按鈕下載一個 .json 檔案。此檔案包含您目前的：</p>
+      <ul class="bk-include-list">
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          題庫所有藥物計算個案（<strong id="bk-q-count" style="color:#fff">—</strong> 題）
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          英雄榜歷史挑戰成績（<strong id="bk-s-count" style="color:#fff">—</strong> 筆）
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          匯出時間戳記與版本資訊
+        </li>
+      </ul>
+      <button class="bk-btn-export" id="bk-do-export">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下載備份檔案 (<span id="bk-filename">pacu_backup.json</span>)
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: IMPORT -->
+  <div class="bk-step">
+    <div class="bk-step-head import">
+      <div class="bk-step-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div>
+        <div class="bk-step-label">Step 2</div>
+        <div class="bk-step-name">在新裝置匯入</div>
+      </div>
+    </div>
+    <div class="bk-step-body">
+      <p class="bk-desc">在另一台裝置開啟此工具，選擇剛才下載的 .json 檔案即可還原。</p>
+
+      <!-- Drop zone -->
+      <div class="bk-import-zone" id="bk-drop-zone">
+        <input type="file" id="bk-file-input" accept=".json,application/json" />
+        <div class="bk-import-zone-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="bk-import-zone-text" id="bk-zone-text">選擇備份檔案並還原</div>
+        <div class="bk-import-zone-sub" id="bk-zone-sub">點擊選擇或拖放 .json 備份檔案至此</div>
+      </div>
+
+      <!-- File parse preview -->
+      <div class="bk-preview hidden" id="bk-preview"></div>
+
+      <!-- Options section (visible after valid file loaded) -->
+      <div id="bk-options" class="hidden">
+        <div class="bk-mode-row">
+          <button class="bk-mode-btn active" id="bk-mode-merge">
+            合併模式<br>
+            <span style="font-size:.65rem;font-weight:400;color:var(--slate-500)">保留現有 + 加入新資料</span>
+          </button>
+          <button class="bk-mode-btn" id="bk-mode-replace">
+            取代模式<br>
+            <span style="font-size:.65rem;font-weight:400;color:var(--slate-500)">清除現有 → 全數取代</span>
+          </button>
+        </div>
+        <div class="bk-replace-warn" id="bk-replace-warn">
+          ⚠️ 取代模式將清除現有所有題庫與成績，建議先完成步驟 1 匯出備份後再執行此操作。
+        </div>
+        <button class="bk-btn-import" id="bk-do-import">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          確認匯入資料
+        </button>
+      </div>
+
+      <!-- Notice -->
+      <div class="bk-notice" style="margin-top:16px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        注意：匯入後將依所選模式覆蓋或合併該裝置原本的資料！
+      </div>
+    </div>
+  </div>
+</div><!-- page-backup -->
+
+</div><!-- .wrap -->
+
+<!-- MODAL: Edit/Add Question -->
+<div class="modal-backdrop hidden" id="modal-q">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-q-close">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-title" id="modal-q-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>新增藥物計算個案</span>
+    </div>
+    <div id="modal-q-error" class="hidden feedback-msg error" style="margin-bottom:14px"></div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label class="form-label">快速選擇藥物 (自動帶入下方名稱／已建立標記)</label>
+        <select id="f-drug-select" class="form-select">
+          <option value="">-- 請選擇藥物或自行於下方輸入 --</option>
+        </select>
+        <div class="form-hint">選擇後將自動填入「藥物名稱」欄位；標示「已使用」代表題庫中已有該藥物的題目。</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">藥物名稱 (Drug Name)</label>
+        <input type="text" id="f-drug" class="form-input" placeholder="例如: Dopamine" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">包裝規格 (Spec)</label>
+        <input type="text" id="f-spec" class="form-input" placeholder="例如: 400mg" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">臨床情境與提問 (Question)</label>
+        <textarea id="f-question" class="form-textarea" rows="2" placeholder="請輸入病人生理臨床情境與護理給藥問題..."></textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">正確答案 (Answer) — 必須與選項之一完全相同</label>
+        <input type="text" id="f-answer" class="form-input answer-input" placeholder="例如: 10ml" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">選項 1</label>
+        <input type="text" id="f-opt0" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">選項 2</label>
+        <input type="text" id="f-opt1" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">選項 3</label>
+        <input type="text" id="f-opt2" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">選項 4</label>
+        <input type="text" id="f-opt3" class="form-input" />
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--slate-900)" class="space-y-16">
+      <div class="form-section-label">個案擬真生理特徵 (Vitals Setup)</div>
+      <div class="vitals-grid">
+        <div>
+          <div class="vitals-label">HR 心率</div>
+          <input type="number" id="f-hr" class="vitals-input" value="80" />
+        </div>
+        <div>
+          <div class="vitals-label">SpO2 血氧</div>
+          <input type="number" id="f-spo2" class="vitals-input" value="98" />
+        </div>
+        <div>
+          <div class="vitals-label">RR 呼吸</div>
+          <input type="number" id="f-rr" class="vitals-input" value="16" />
+        </div>
+        <div>
+          <div class="vitals-label">BP 血壓</div>
+          <input type="text" id="f-bp" class="vitals-input" value="120/80" />
+        </div>
+      </div>
+    </div>
+    <div class="form-btns">
+      <button class="btn-save" id="modal-save-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        儲存題目資料
+      </button>
+      <button class="btn-cancel" id="modal-cancel-btn">取消變更</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Score -->
+<div class="modal-backdrop hidden" id="modal-score">
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-close" id="modal-score-close">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>新增英雄榜成績</span>
+    </div>
+    <div id="modal-score-error" class="hidden feedback-msg error" style="margin-bottom:14px"></div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label class="form-label">護理師姓名</label>
+        <input type="text" id="s-name" class="form-input" placeholder="例如: 王小明" maxlength="30" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">正確率分數 (0～100)</label>
+        <input type="number" id="s-score" class="form-input" min="0" max="100" placeholder="例如: 90" />
+      </div>
+    </div>
+    <div class="form-btns">
+      <button class="btn-save" id="modal-score-save-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        儲存成績
+      </button>
+      <button class="btn-cancel" id="modal-score-cancel-btn">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Generic Confirm -->
+<div class="modal-backdrop hidden" id="modal-confirm">
+  <div class="modal-box" style="max-width:420px">
+    <div class="confirm-modal">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--red-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <h3 id="confirm-title">確認執行此操作嗎？</h3>
+      <p id="confirm-msg">此操作無法復原。</p>
+      <div class="form-btns" style="margin-top:20px">
+        <button class="btn-save" id="confirm-ok-btn">確認</button>
+        <button class="btn-cancel" id="confirm-cancel-btn">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────
+const ADMIN_PASSWORD = "8888";
+const TOTAL_Q = 33;
+const TIME_PER_Q = 60;
+const WARN_THRESHOLD = 10;
+const STORAGE_KEY_Q = "pacu_questions_v4";
+const STORAGE_KEY_S = "pacu_scores_v4";
+
+// ─────────────────────────────────────────────
+// DEFAULT QUESTIONS
+// ─────────────────────────────────────────────
+const DEFAULT_DRUGS = [
+  { drug:"Dopamine", spec:"400mg", question:"病人休克，醫囑給予Dopamine 400mg 進行滴注，應抽取幾 ml 注入點滴袋中？", options:["10ml","5ml","4ml","20ml"], answer:"10ml", vitals:{hr:51,spo2:92,rr:22,bp:"72/39"} },
+  { drug:"Norepinephrine", spec:"4mg", question:"嚴重低血壓，醫囑Norepinephrine 16mg in D5W 500ml，請問應加入幾 Amp？", options:["2Amp","4ml","8Amp","4Amp"], answer:"4Amp", vitals:{hr:135,spo2:94,rr:24,bp:"61/28"} },
+  { drug:"Heparin", spec:"25000unit", question:"抗凝血治療，醫囑Heparin 3000unit IVD，應抽取多少 ml？", options:["0.5ml","1.6ml","2.5ml","0.6ml"], answer:"0.6ml", vitals:{hr:155,spo2:98,rr:18,bp:"105/66"} },
+  { drug:"Nalbuphine", spec:"10mg", question:"術後傷口疼痛，醫囑Nalbuphine 6mg IVP，應抽取幾 ml？", options:["0.5ml","0.3ml","5.0ml","0.6ml"], answer:"0.6ml", vitals:{hr:141,spo2:100,rr:22,bp:"131/77"} },
+  { drug:"Morphine", spec:"10mg", question:"止痛控制，醫囑Morphine 2mg IVP，應抽取多少 ml？", options:["0.1ml","0.2ml","5.0ml","1.0ml"], answer:"0.2ml", vitals:{hr:62,spo2:94,rr:14,bp:"105/65"} },
+  { drug:"Fentanyl", spec:"100mcg", question:"突發劇烈疼痛，醫囑Fentanyl 35mcg IVP，應抽取多少 ml？", options:["0.5ml","0.7ml","1.5ml","7ml"], answer:"0.7ml", vitals:{hr:94,spo2:98,rr:28,bp:"189/100"} },
+  { drug:"Furosemide", spec:"20mg", question:"病人少尿且血壓偏高，醫囑Furosemide 5mg IVP，應抽取幾 ml？", options:["0.1ml","0.5ml","1ml","1.5ml"], answer:"0.5ml", vitals:{hr:88,spo2:96,rr:18,bp:"165/98"} },
+  { drug:"Atropine", spec:"1mg", question:"心跳過慢且血壓不穩，醫囑Atropine 0.4mg IVP，應抽取多少 ml？", options:["0.25ml","0.5ml","0.4ml","1.0ml"], answer:"0.4ml", vitals:{hr:34,spo2:98,rr:16,bp:"82/42"} },
+  { drug:"Midazolam", spec:"15mg", question:"病人持續躁動，醫囑Midazolam 3mg IVP 進行鎮靜，應抽取多少 ml？", options:["0.2ml","0.5ml","0.8ml","0.6ml"], answer:"0.6ml", vitals:{hr:145,spo2:93,rr:12,bp:"155/82"} },
+  { drug:"Diphenhydramine", spec:"30mg", question:"輸血完畢全身紅疹過敏反應，醫囑Diphenhydramine 15mg IVP，應抽取多少 ml？", options:["1ml","1.5ml","0.5ml","0.05ml"], answer:"0.5ml", vitals:{hr:92,spo2:97,rr:14,bp:"120/80"} },
+  { drug:"Propofol", spec:"200mg", question:"病人持續仰臥起坐躁動不安，醫囑Propofol 80mg IVP，應抽取多少 ml？", options:["4ml","10ml","8ml","0.8ml"], answer:"8ml", vitals:{hr:136,spo2:92,rr:10,bp:"182/92"} },
+  { drug:"Ephedrine", spec:"40mg", question:"半身麻醉後血壓驟降，醫囑Ephedrine 6mg IVP，應抽取多少 ml？", options:["1.25ml","0.15ml","1.5ml","0.2ml"], answer:"0.15ml", vitals:{hr:112,spo2:99,rr:18,bp:"78/32"} },
+  { drug:"Magnesium sulfate 10%", spec:"10%", question:"ABG data Mg+偏低，醫囑Magnesium sulfate 0.5Amp IVD，請問是幾 ml？", options:["10ml","20ml","100ml","15ml"], answer:"10ml", vitals:{hr:118,spo2:95,rr:20,bp:"120/80"} },
+  { drug:"Sodium Bicarbonate", spec:"7.5%", question:"ABG data BE-8，醫囑Sodium Bicarbonate 4Amp IVD，需抽多少 ml？", options:["40ml","16ml","50ml","80ml"], answer:"80ml", vitals:{hr:122,spo2:94,rr:28,bp:"110/60"} },
+  { drug:"Epinephrine", spec:"1mg", question:"心跳慢及血壓低，醫囑Epinephrine 0.3mg IVP，應抽取多少 ml？", options:["3ml","0.3ml","30ml","1ml"], answer:"0.3ml", vitals:{hr:40,spo2:88,rr:24,bp:"75/35"} },
+  { drug:"Lidocaine 2%", spec:"100mg", question:"心律不整，醫囑Lidocaine 40mg IVP，應抽取多少 ml？", options:["0.2ml","1.5ml","2ml","2.5ml"], answer:"2ml", vitals:{hr:160,spo2:92,rr:20,bp:"100/60"} },
+  { drug:"Neostigmine", spec:"0.5mg", question:"移除氣管內管先呼吸費力點頭表示無力，醫囑Neostigmine 2mg IVP，應抽取多少 Amp？", options:["0.5Amp","1Amp","2Amp","4Amp"], answer:"4Amp", vitals:{hr:82,spo2:77,rr:8,bp:"125/80"} },
+  { drug:"Calcium Gluconate", spec:"10ml", question:"ABG data Ca+偏低，醫囑Calcium Gluconate 0.5 Amp IVD，請問是幾 ml？", options:["1ml","5ml","10ml","0.5ml"], answer:"5ml", vitals:{hr:98,spo2:98,rr:18,bp:"115/75"} },
+  { drug:"Pethidine", spec:"50mg", question:"術後給予溫毯保暖仍持續寒顫，醫囑Pethidine 35mg IVP，應抽取多少 ml？", options:["0.25ml","0.5ml","0.7ml","1.0ml"], answer:"0.7ml", vitals:{hr:118,spo2:92,rr:26,bp:"152/122"} },
+  { drug:"Ketorolac", spec:"30mg", question:"傷口非常酸又痛，醫囑Ketorolac 15mg IVP，應抽取多少 ml？", options:["0.3ml","0.5ml","0.7ml","1.0ml"], answer:"0.5ml", vitals:{hr:99,spo2:99,rr:16,bp:"138/88"} },
+  { drug:"Dexamethasone", spec:"5mg", question:"病人喉頭水腫嚴重，醫囑Dexamethasone 2.5mg IVP，應抽取幾 ml？", options:["1ml","2.5ml","0.5ml","5ml"], answer:"0.5ml", vitals:{hr:95,spo2:98,rr:18,bp:"128/78"} },
+  { drug:"Primperan", spec:"10mg", question:"病人持續噁心嘔吐，醫囑Primperan 7.5mg IVP，應抽取多少 ml？", options:["0.5ml","1.0ml","1.5ml","2.0ml"], answer:"1.5ml", vitals:{hr:56,spo2:99,rr:16,bp:"115/70"} },
+  { drug:"Droperidol", spec:"5mg", question:"預防術後噁心嘔吐，醫囑Droperidol 1.25mg IVD，應抽取多少 ml？", options:["2.5ml","0.5ml","5.0ml","1.25ml"], answer:"0.5ml", vitals:{hr:115,spo2:91,rr:28,bp:"140/90"} },
+  { drug:"Amiodarone", spec:"150mg", question:"EKG 呈Af，醫囑Amiodarone 450mg IVD，應抽取幾 ml 進行調配？", options:["10ml","3ml","5ml","9ml"], answer:"9ml", vitals:{hr:166,spo2:93,rr:22,bp:"95/61"} },
+  { drug:"Mannitol", spec:"100ml", question:"ICP:32mmHG 需降低腦壓，醫囑Mannitol 0.8 Bot，應滴注多少 ml？", options:["80ml","40ml","50ml","100ml"], answer:"80ml", vitals:{hr:115,spo2:92,rr:12,bp:"125/80"} },
+  { drug:"Novamin", spec:"5mg", question:"持續眩暈止吐，醫囑Novamin 3mg IM，應抽取幾 ml？", options:["0.3ml","0.5ml","0.6ml","1ml"], answer:"0.6ml", vitals:{hr:98,spo2:99,rr:18,bp:"142/92"} },
+  { drug:"Adenosine", spec:"6mg", question:"EKG 呈PSVT，醫囑Adenosine 1Amp rapid IVP st，請問給予了幾 mg？", options:["0.6mg","0.06mg","6.0mg","12mg"], answer:"6.0mg", vitals:{hr:157,spo2:92,rr:18,bp:"102/51"} },
+  { drug:"Nicardipine", spec:"10mg", question:"術後血壓極高，醫囑Nicardipine 2mg IVP st，應抽取多少 ml？", options:["20ml","2ml","0.2ml","10ml"], answer:"2ml", vitals:{hr:152,spo2:98,rr:16,bp:"205/102"} },
+  { drug:"Labetalol", spec:"25mg", question:"控制高血壓，醫囑Labetalol 2mg IVP，應抽取多少 ml？", options:["1ml","0.2ml","3ml","0.4ml"], answer:"0.4ml", vitals:{hr:115,spo2:98,rr:18,bp:"192/115"} },
+  { drug:"Glucose 50%", spec:"50%", question:"ABG data Glucose 68mg/dL，醫囑Glucose 50% 1Amp st，應抽取幾 ml？", options:["10ml","50ml","20ml","5ml"], answer:"20ml", vitals:{hr:111,spo2:95,rr:20,bp:"122/72"} },
+  { drug:"Rocuronium", spec:"50mg", question:"病人預重新放置氣管內管，醫囑Rocuronium 15mg IVP，應抽取多少 ml？", options:["15ml","2ml","1.5ml","2.5ml"], answer:"1.5ml", vitals:{hr:92,spo2:90,rr:10,bp:"112/72"} },
+  { drug:"Tetrastarch", spec:"500ml", question:"術中BLOOD LOSS 500ML，醫囑Tetrastarch 0.4 bot IVD，應滴注幾 ml？", options:["50ml","100ml","300ml","200ml"], answer:"200ml", vitals:{hr:117,spo2:90,rr:12,bp:"72/38"} },
+  { drug:"Nitrostat", spec:"0.6mg", question:"病人主訴胸悶心臟痛，醫囑Nitrostat 0.6mg SL，應給予多少 tab？", options:["0.5tab","2tab","1tab","1.5tab"], answer:"1tab", vitals:{hr:80,spo2:99,rr:16,bp:"118/78"} }
+];
+
+// Catalog of known drug names (used to populate the quick-select dropdown
+// in the question editor, with an "already used" marker synced live).
+const DRUG_CATALOG = Array.from(new Set(DEFAULT_DRUGS.map(d => d.drug)));
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let questions = [];
+let scores = [];
+let quizSet = [];
+let currentIdx = 0;
+let timeLeft = TIME_PER_Q;
+let questionDeadline = 0;
+let correctCount = 0;
+let wrongAnswers = [];
+let answerFeedback = null; // null | 'correct' | 'wrong' | 'timeout'
+let timerInterval = null;
+let monitorInterval = null;
+let nurseName = '';
+let isMuted = false;
+let isAdminAuth = false;
+let editingId = null;
+let deleteId = null;
+let deleteScoreId = null;
+let pendingConfirmAction = null;
+let audioCtx = null;
+
+// ─────────────────────────────────────────────
+// STORAGE
+// ─────────────────────────────────────────────
+function loadData() {
+  try {
+    const q = localStorage.getItem(STORAGE_KEY_Q);
+    questions = q ? JSON.parse(q) : DEFAULT_DRUGS.map((d,i) => ({...d, id: 'default_'+i}));
+  } catch(e) { questions = DEFAULT_DRUGS.map((d,i) => ({...d, id: 'default_'+i})); }
+  if (!questions.length) questions = DEFAULT_DRUGS.map((d,i) => ({...d, id: 'default_'+i}));
+
+  try {
+    const s = localStorage.getItem(STORAGE_KEY_S);
+    scores = s ? JSON.parse(s) : [];
+  } catch(e) { scores = []; }
+
+  // Migrate legacy score entries that don't have a stable id yet.
+  let migrated = false;
+  scores.forEach((s, i) => {
+    if (!s.id) { s.id = 'score_' + Date.now() + '_' + i + '_' + Math.floor(Math.random()*10000); migrated = true; }
+  });
+  if (migrated) saveScores();
+}
+
+function saveQuestions() {
+  try { localStorage.setItem(STORAGE_KEY_Q, JSON.stringify(questions)); } catch(e) {}
+}
+function saveScores() {
+  try { localStorage.setItem(STORAGE_KEY_S, JSON.stringify(scores)); } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// AUDIO
+// ─────────────────────────────────────────────
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playBeep(freq=880, duration=0.1, type='sine', vol=0.15) {
+  if (isMuted || !audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playMonitorBeep(vitals) {
+  if (isMuted || !audioCtx || answerFeedback) return;
+  try {
+    const spo2 = vitals?.spo2 || 98;
+    const freq = 440 + (spo2 - 70) * 15;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.12);
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// PAGE ROUTING
+// ─────────────────────────────────────────────
+const pages = ['cover','quiz','result','leaderboard','login','admin','scoreadmin','backup'];
+
+function showPage(id) {
+  pages.forEach(p => {
+    const el = document.getElementById('page-'+p);
+    if (el) el.classList.toggle('hidden', p !== id);
+  });
+  if (id === 'cover') updateStartButtonState();
+  window.scrollTo(0, 0);
+}
+
+function updateStartButtonState() {
+  const nameFilled = document.getElementById('nurse-name').value.trim().length > 0;
+  const hasQuestions = questions.length > 0;
+  document.getElementById('start-btn').disabled = !nameFilled || !hasQuestions;
+  document.getElementById('no-questions-warning').classList.toggle('hidden', hasQuestions);
+}
+
+// ─────────────────────────────────────────────
+// GENERIC CONFIRM MODAL (replaces native confirm())
+// ─────────────────────────────────────────────
+function openConfirmModal({ title, message, okText = '確認', onConfirm }) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = message;
+  document.getElementById('confirm-ok-btn').textContent = okText;
+  pendingConfirmAction = onConfirm;
+  document.getElementById('modal-confirm').classList.remove('hidden');
+}
+function closeConfirmModal() {
+  pendingConfirmAction = null;
+  document.getElementById('modal-confirm').classList.add('hidden');
+}
+
+// ─────────────────────────────────────────────
+// MONITOR UI
+// ─────────────────────────────────────────────
+function updateMonitorUI(vitals, dead=false) {
+  const vHr = document.getElementById('v-hr');
+  const vSpo2 = document.getElementById('v-spo2');
+  const vRr = document.getElementById('v-rr');
+  const vBp = document.getElementById('v-bp');
+  const overlay = document.getElementById('monitor-overlay');
+
+  if (dead) {
+    vHr.textContent = '0'; vHr.className = 'vital-val big dead';
+    vSpo2.textContent = '--'; vSpo2.className = 'vital-val big dead';
+    vRr.textContent = '0'; vRr.className = 'vital-val med dead';
+    vBp.textContent = '--/--'; vBp.className = 'vital-val med dead';
+    overlay.className = 'monitor-overlay danger';
+    return;
+  }
+  overlay.className = timeLeft <= WARN_THRESHOLD ? 'monitor-overlay warn' : 'monitor-overlay';
+  vHr.textContent = vitals.hr; vHr.className = 'vital-val big red-color';
+  vSpo2.textContent = vitals.spo2+'%'; vSpo2.className = 'vital-val big green-color';
+  vRr.textContent = vitals.rr; vRr.className = 'vital-val med yellow-color';
+  vBp.textContent = vitals.bp; vBp.className = 'vital-val med white-color';
+}
+
+function updateTimerBar() {
+  const bar = document.getElementById('timer-bar');
+  const pct = (timeLeft / TIME_PER_Q) * 100;
+  bar.style.width = pct + '%';
+  bar.className = 'timer-bar ' + (timeLeft <= WARN_THRESHOLD ? 'warning' : 'normal');
+  document.getElementById('time-left').textContent = timeLeft;
+}
+
+// ─────────────────────────────────────────────
+// QUIZ LOGIC
+// ─────────────────────────────────────────────
+function shuffled(arr) {
+  const out = [...arr];
+  for (let i = out.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [out[i],out[j]] = [out[j],out[i]];
+  }
+  return out;
+}
+
+function startGame() {
+  initAudio();
+  nurseName = document.getElementById('nurse-name').value.trim();
+  if (!nurseName || !questions.length) { updateStartButtonState(); return; }
+
+  // Build a 33-question set, reshuffling on every refill pass so repeats
+  // (when the bank has fewer than 33 questions) don't follow a fixed order.
+  let selected = [];
+  while (selected.length < TOTAL_Q) selected.push(...shuffled(questions));
+  quizSet = selected.slice(0, TOTAL_Q);
+
+  currentIdx = 0;
+  correctCount = 0;
+  wrongAnswers = [];
+  answerFeedback = null;
+  timeLeft = TIME_PER_Q;
+
+  showPage('quiz');
+  renderQuestion();
+  startTimers();
+}
+
+function renderQuestion() {
+  const q = quizSet[currentIdx];
+  document.getElementById('case-label').textContent = `PACU Case ${currentIdx+1} / ${quizSet.length}`;
+  document.getElementById('question-text').textContent = q.question;
+  document.getElementById('time-left').textContent = timeLeft;
+  updateMonitorUI(q.vitals);
+  updateTimerBar();
+  renderOptions(q, null);
+  const fb = document.getElementById('feedback-banner');
+  fb.className = 'hidden';
+  fb.innerHTML = '';
+}
+
+function renderOptions(q, feedback) {
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    if (feedback) {
+      btn.disabled = true;
+      if (opt === q.answer) btn.className = 'opt-btn correct';
+      else if (feedback === opt) btn.className = 'opt-btn wrong';
+      else btn.className = 'opt-btn faded';
+    }
+    btn.addEventListener('click', () => handleAnswer(opt));
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(choice, isTimeout=false) {
+  if (answerFeedback) return;
+  clearInterval(timerInterval);
+  clearInterval(monitorInterval);
+
+  const q = quizSet[currentIdx];
+  const isCorrect = !isTimeout && choice === q.answer;
+  answerFeedback = isCorrect ? 'correct' : (isTimeout ? 'timeout' : 'wrong');
+
+  renderOptions(q, isCorrect ? null : choice);
+
+  if (isCorrect) {
+    correctCount++;
+    playBeep(1320, 0.15, 'sine', 0.5);
+    updateMonitorUI(q.vitals);
+    showFeedback('correct', '✓ 劑量調配正確！病人生理特徵穩定！');
+    setTimeout(proceedToNext, 1000);
+  } else {
+    wrongAnswers.push({ drug: q.drug, spec: q.spec, question: q.question, correctAnswer: q.answer, userAnswer: isTimeout ? '（時間超時）' : choice });
+    playBeep(200, 0.6, 'square', 0.08);
+    updateMonitorUI(q.vitals, true);
+    showFeedback('wrong', (isTimeout ? '⌛ 調配超時！' : '✗ 計算錯誤！') + ' 正確劑量為：<strong style="color:#fff;text-decoration:underline">' + q.answer + '</strong>');
+    setTimeout(proceedToNext, 1600);
+  }
+}
+
+function showFeedback(type, html) {
+  const fb = document.getElementById('feedback-banner');
+  const icon = type === 'correct'
+    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:bounce 1s infinite"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  fb.className = 'feedback-banner ' + type;
+  fb.innerHTML = icon + '<span>' + html + '</span>';
+}
+
+function proceedToNext() {
+  answerFeedback = null;
+  if (currentIdx + 1 < quizSet.length) {
+    currentIdx++;
+    timeLeft = TIME_PER_Q;
+    startTimers();
+    renderQuestion();
+  } else {
+    stopTimers();
+    finishGame();
+  }
+}
+
+function startTimers() {
+  stopTimers();
+  const q = quizSet[currentIdx];
+  questionDeadline = Date.now() + timeLeft * 1000;
+
+  // Countdown — recomputed from wall-clock time each tick so a throttled
+  // or backgrounded tab catches up correctly instead of drifting/stalling.
+  timerInterval = setInterval(() => {
+    if (answerFeedback) return;
+    const remaining = Math.max(0, Math.ceil((questionDeadline - Date.now()) / 1000));
+    if (remaining !== timeLeft) {
+      timeLeft = remaining;
+      updateTimerBar();
+      if (timeLeft > 0 && timeLeft <= WARN_THRESHOLD) playBeep(400, 0.05, 'triangle', 0.04);
+    }
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      handleAnswer(null, true);
+    }
+  }, 200);
+
+  // Monitor beep
+  const delay = (60 / (q.vitals?.hr || 80)) * 1000;
+  monitorInterval = setInterval(() => {
+    if (!answerFeedback) playMonitorBeep(q.vitals);
+  }, delay);
+}
+
+function stopTimers() {
+  clearInterval(timerInterval);
+  clearInterval(monitorInterval);
+  timerInterval = null;
+  monitorInterval = null;
+}
+
+// ─────────────────────────────────────────────
+// FINISH GAME
+// ─────────────────────────────────────────────
+function finishGame() {
+  stopTimers();
+  const total = Math.round((correctCount / quizSet.length) * 100);
+
+  let status = '仍須努力';
+  let msg = `${nurseName}，請務必加強複習 PACU 常用藥物劑量計算。`;
+  if (total >= 95) { status = '急救兵器譜首位'; msg = `傳說級表現！${nurseName} 是 PACU 的定海神針，劑量算得又快又準！`; }
+  else if (total >= 85) { status = '卓越護理專家'; msg = `表現極為優異！${nurseName} 具備極強的臨床專科應變力。`; }
+  else if (total >= 70) { status = '合格臨床護理'; msg = `${nurseName} 順利通關，可於臨床執行給藥監測。`; }
+
+  // Save score
+  scores.push({ id: 'score_' + Date.now() + '_' + Math.floor(Math.random()*10000), name: nurseName, totalScore: total, status, timestamp: Date.now() });
+  scores.sort((a,b) => b.totalScore - a.totalScore);
+  if (scores.length > 50) scores = scores.slice(0, 50);
+  saveScores();
+
+  // Render result
+  const icon = document.getElementById('result-icon');
+  if (total >= 80) {
+    icon.innerHTML = '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="bounce"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>';
+  } else {
+    icon.innerHTML = '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation:pulse 1s infinite"><circle cx="12" cy="11" r="8"/><line x1="8" y1="6" x2="8" y2="2"/><line x1="16" y1="6" x2="16" y2="2"/><path d="M9 15s1 2 3 2 3-2 3-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
+  }
+  const statusEl = document.getElementById('result-status');
+  statusEl.textContent = status;
+  statusEl.className = 'result-status ' + (total >= 80 ? 'gold' : 'red');
+  document.getElementById('result-score').textContent = total;
+  document.getElementById('result-msg').textContent = msg;
+
+  // Wrong answers
+  const wrongSec = document.getElementById('wrong-section');
+  if (wrongAnswers.length) {
+    document.getElementById('wrong-header-text').textContent = `錯題與劑量檢討 (${wrongAnswers.length} 題)`;
+    const wl = document.getElementById('wrong-list');
+    wl.innerHTML = wrongAnswers.map(w => `
+      <div class="wrong-item">
+        <div class="q-text">[${w.drug} ${w.spec}] ${w.question}</div>
+        <div class="ans-row">
+          <span class="wrong-ans">您的解答：<strong style="text-decoration:line-through">${w.userAnswer}</strong></span>
+          <span class="correct-ans">正確答案：${w.correctAnswer}</span>
+        </div>
+      </div>
+    `).join('');
+    wrongSec.classList.remove('hidden');
+  } else {
+    wrongSec.classList.add('hidden');
+  }
+
+  showPage('result');
+}
+
+// ─────────────────────────────────────────────
+// LEADERBOARD
+// ─────────────────────────────────────────────
+function renderLeaderboard() {
+  const el = document.getElementById('lb-content');
+  if (!scores.length) {
+    el.innerHTML = '<div class="lb-empty">目前尚無急救挑戰紀錄</div>';
+    return;
+  }
+  const top = scores.slice(0, 15);
+  const rankClass = i => ['r1','r2','r3'][i] || 'rn';
+  el.innerHTML = `<div class="lb-scroll">${
+    top.map((s, i) => `
+      <div class="lb-row">
+        <div class="lb-left">
+          <div class="rank-badge ${rankClass(i)}">${i+1}</div>
+          <div>
+            <div class="lb-name">${s.name}</div>
+            <div class="lb-status">${s.status || '通關專科人員'}</div>
+          </div>
+        </div>
+        <div class="lb-score-wrap">
+          <div class="lb-score-label">正確率</div>
+          <div class="lb-score-val">${s.totalScore}%</div>
+        </div>
+      </div>
+    `).join('')
+  }</div>`;
+}
+
+// ─────────────────────────────────────────────
+// ADMIN PANEL — QUESTIONS
+// ─────────────────────────────────────────────
+function renderAdminList() {
+  document.getElementById('admin-count').textContent = `當前線上題庫容量：${questions.length} 題 (隨機抽選 33 題進行挑戰)`;
+  const el = document.getElementById('q-list-content');
+  if (!questions.length) { el.innerHTML = '<div class="lb-empty">題庫為空</div>'; return; }
+  el.innerHTML = questions.map((q, i) => `
+    <div class="q-row">
+      <div>
+        <div><span class="q-drug-tag">${q.drug}</span><span class="q-spec">${q.spec}</span></div>
+        <div class="q-text-row">${q.question}</div>
+        <div class="q-answer">解答：${q.answer}</div>
+      </div>
+      <div class="q-actions">
+        <button class="q-act-btn edit" onclick="openEditModal('${q.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="q-act-btn del" onclick="openDeleteModal('${q.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Populate / refresh the "quick select drug" dropdown in the question
+// editor modal, marking catalog drugs already present in the bank as 已使用.
+function renderDrugSelectOptions(selectedDrug) {
+  const sel = document.getElementById('f-drug-select');
+  const usedCounts = {};
+  questions.forEach(q => {
+    if (!q.drug) return;
+    usedCounts[q.drug] = (usedCounts[q.drug] || 0) + 1;
+  });
+  // Union of the standard catalog plus any custom drug names already in the bank,
+  // so newly-added custom drugs also show up (and get marked as used) next time.
+  const allNames = Array.from(new Set([...DRUG_CATALOG, ...Object.keys(usedCounts)])).sort((a,b) => a.localeCompare(b));
+
+  let html = '<option value="">-- 請選擇藥物或自行於下方輸入 --</option>';
+  allNames.forEach(name => {
+    const count = usedCounts[name] || 0;
+    const tag = count > 0 ? `（已使用 x${count}）` : '（尚未使用）';
+    const isSelected = selectedDrug && selectedDrug === name ? ' selected' : '';
+    html += `<option value="${name.replace(/"/g,'&quot;')}"${isSelected}>${name} ${tag}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+function openEditModal(id) {
+  const q = id ? questions.find(x => x.id === id) : null;
+  editingId = id || null;
+  document.getElementById('modal-q-error').classList.add('hidden');
+  document.getElementById('modal-q-title').innerHTML = id
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>編輯現有藥物題庫</span>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>新增藥物計算個案</span>';
+  document.getElementById('f-drug').value = q?.drug || '';
+  document.getElementById('f-spec').value = q?.spec || '';
+  document.getElementById('f-question').value = q?.question || '';
+  document.getElementById('f-answer').value = q?.answer || '';
+  document.getElementById('f-opt0').value = q?.options?.[0] || '';
+  document.getElementById('f-opt1').value = q?.options?.[1] || '';
+  document.getElementById('f-opt2').value = q?.options?.[2] || '';
+  document.getElementById('f-opt3').value = q?.options?.[3] || '';
+  document.getElementById('f-hr').value = q?.vitals?.hr ?? 80;
+  document.getElementById('f-spo2').value = q?.vitals?.spo2 ?? 98;
+  document.getElementById('f-rr').value = q?.vitals?.rr ?? 16;
+  document.getElementById('f-bp').value = q?.vitals?.bp || '120/80';
+  renderDrugSelectOptions(q?.drug || '');
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  editingId = null;
+  document.getElementById('modal-q').classList.add('hidden');
+}
+
+function saveQuestion() {
+  const drug = document.getElementById('f-drug').value.trim();
+  const spec = document.getElementById('f-spec').value.trim();
+  const question = document.getElementById('f-question').value.trim();
+  const answer = document.getElementById('f-answer').value.trim();
+  const opts = [0,1,2,3].map(i => document.getElementById('f-opt'+i).value.trim());
+  const errEl = document.getElementById('modal-q-error');
+  if (!drug || !question || !answer || opts.some(o => !o)) {
+    errEl.textContent = '所有欄位均為必填，且四個選項皆不可為空！';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!opts.includes(answer)) {
+    errEl.textContent = '正確答案必須與下方四個選項之一完全相同！';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+  const qObj = {
+    drug, spec, question, answer, options: opts,
+    vitals: {
+      hr: parseInt(document.getElementById('f-hr').value) || 80,
+      spo2: parseInt(document.getElementById('f-spo2').value) || 98,
+      rr: parseInt(document.getElementById('f-rr').value) || 16,
+      bp: document.getElementById('f-bp').value.trim() || '120/80'
+    }
+  };
+  if (editingId) {
+    const idx = questions.findIndex(x => x.id === editingId);
+    if (idx >= 0) questions[idx] = { ...questions[idx], ...qObj };
+  } else {
+    questions.push({ ...qObj, id: 'q_' + Date.now() });
+  }
+  saveQuestions();
+  renderAdminList();
+  renderDrugSelectOptions(drug);
+  closeEditModal();
+  showAdminFeedback('success', '題目儲存成功！');
+}
+
+function openDeleteModal(id) {
+  deleteId = id;
+  openConfirmModal({
+    title: '確認刪除此題目嗎？',
+    message: '刪除後此題目將立即自題庫移除，且無法復原。',
+    okText: '確認刪除',
+    onConfirm: confirmDelete
+  });
+}
+
+function confirmDelete() {
+  if (!deleteId) return;
+  questions = questions.filter(q => q.id !== deleteId);
+  saveQuestions();
+  renderAdminList();
+  deleteId = null;
+  showAdminFeedback('success', '題目已成功刪除！');
+}
+
+function resetToDefault() {
+  openConfirmModal({
+    title: '確認重置題庫？',
+    message: '確定要刪除現有所有題目，並重設為 33 題官方預設考題嗎？此操作無法復原。',
+    okText: '確認重置',
+    onConfirm: () => {
+      questions = DEFAULT_DRUGS.map((d,i) => ({...d, id: 'default_'+i+'_'+Date.now()}));
+      saveQuestions();
+      renderAdminList();
+      showAdminFeedback('success', '題庫已重置為預設設定！');
+    }
+  });
+}
+
+function showAdminFeedback(type, text) {
+  const el = document.getElementById('admin-feedback');
+  el.className = 'feedback-msg ' + type;
+  el.textContent = text;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// ─────────────────────────────────────────────
+// ADMIN PANEL — LEADERBOARD / SCORES
+// ─────────────────────────────────────────────
+function statusForScore(total) {
+  if (total >= 95) return '急救兵器譜首位';
+  if (total >= 85) return '卓越護理專家';
+  if (total >= 70) return '合格臨床護理';
+  return '仍須努力';
+}
+
+function renderScoreAdminList() {
+  document.getElementById('scoreadmin-count').textContent = `當前英雄榜共 ${scores.length} 筆紀錄`;
+  const el = document.getElementById('sa-list-content');
+  if (!scores.length) { el.innerHTML = '<div class="lb-empty">目前尚無成績紀錄</div>'; return; }
+  const sorted = [...scores].sort((a,b) => (b.totalScore||0) - (a.totalScore||0));
+  el.innerHTML = sorted.map((s, i) => `
+    <div class="sa-row">
+      <div class="lb-left">
+        <div class="rank-badge ${['r1','r2','r3'][i] || 'rn'}">${i+1}</div>
+        <div>
+          <div class="lb-name">${s.name}</div>
+          <div class="lb-status">${s.status || '通關專科人員'}${s.timestamp ? ' ・ ' + new Date(s.timestamp).toLocaleString('zh-TW') : ''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="lb-score-wrap">
+          <div class="lb-score-label">正確率</div>
+          <div class="lb-score-val">${s.totalScore}%</div>
+        </div>
+        <button class="q-act-btn del" onclick="openDeleteScoreModal('${s.id}')" title="刪除此筆成績">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openScoreAdminPage() {
+  renderScoreAdminList();
+  showPage('scoreadmin');
+}
+
+function showScoreAdminFeedback(type, text) {
+  const el = document.getElementById('scoreadmin-feedback');
+  el.className = 'feedback-msg ' + type;
+  el.textContent = text;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+function openAddScoreModal() {
+  document.getElementById('modal-score-error').classList.add('hidden');
+  document.getElementById('s-name').value = '';
+  document.getElementById('s-score').value = '';
+  document.getElementById('modal-score').classList.remove('hidden');
+}
+
+function closeAddScoreModal() {
+  document.getElementById('modal-score').classList.add('hidden');
+}
+
+function saveScoreEntry() {
+  const name = document.getElementById('s-name').value.trim();
+  const scoreRaw = document.getElementById('s-score').value;
+  const errEl = document.getElementById('modal-score-error');
+  const scoreNum = Number(scoreRaw);
+
+  if (!name) {
+    errEl.textContent = '請輸入護理師姓名！';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (scoreRaw === '' || isNaN(scoreNum) || scoreNum < 0 || scoreNum > 100) {
+    errEl.textContent = '請輸入 0～100 之間的有效分數！';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+
+  const total = Math.round(scoreNum);
+  scores.push({
+    id: 'score_' + Date.now() + '_' + Math.floor(Math.random()*10000),
+    name,
+    totalScore: total,
+    status: statusForScore(total),
+    timestamp: Date.now()
+  });
+  scores.sort((a,b) => b.totalScore - a.totalScore);
+  if (scores.length > 50) scores = scores.slice(0, 50);
+  saveScores();
+  renderScoreAdminList();
+  closeAddScoreModal();
+  showScoreAdminFeedback('success', '成績新增成功！');
+}
+
+function openDeleteScoreModal(id) {
+  deleteScoreId = id;
+  openConfirmModal({
+    title: '確認刪除此筆成績嗎？',
+    message: '刪除後此筆英雄榜紀錄將立即移除，且無法復原。',
+    okText: '確認刪除',
+    onConfirm: confirmDeleteScore
+  });
+}
+
+function confirmDeleteScore() {
+  if (!deleteScoreId) return;
+  scores = scores.filter(s => s.id !== deleteScoreId);
+  saveScores();
+  renderScoreAdminList();
+  deleteScoreId = null;
+  showScoreAdminFeedback('success', '成績已成功刪除！');
+}
+
+function clearAllScores() {
+  if (!scores.length) { showScoreAdminFeedback('error', '目前尚無成績可清空。'); return; }
+  openConfirmModal({
+    title: '確認清空全部成績？',
+    message: `確定要刪除英雄榜上全部 ${scores.length} 筆成績紀錄嗎？此操作無法復原，建議先下載 CSV 備份。`,
+    okText: '確認清空',
+    onConfirm: () => {
+      scores = [];
+      saveScores();
+      renderScoreAdminList();
+      showScoreAdminFeedback('success', '英雄榜已清空！');
+    }
+  });
+}
+
+function csvEscape(val) {
+  const s = String(val ?? '');
+  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function exportScoresCSV() {
+  if (!scores.length) { showScoreAdminFeedback('error', '目前尚無成績可匯出。'); return; }
+  const sorted = [...scores].sort((a,b) => (b.totalScore||0) - (a.totalScore||0));
+  const header = ['排名','姓名','正確率(%)','評級','挑戰時間'];
+  const rows = sorted.map((s, i) => [
+    i + 1,
+    s.name,
+    s.totalScore,
+    s.status || '',
+    s.timestamp ? new Date(s.timestamp).toLocaleString('zh-TW') : ''
+  ]);
+  const csvContent = [header, ...rows].map(r => r.map(csvEscape).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const ts = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pacu_leaderboard_${ts}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showScoreAdminFeedback('success', 'CSV 下載完成！');
+}
+
+// ─────────────────────────────────────────────
+// EVENT BINDINGS
+// ─────────────────────────────────────────────
+document.getElementById('go-cover').addEventListener('click', () => {
+  stopTimers();
+  showPage('cover');
+});
+
+document.getElementById('nurse-name').addEventListener('input', updateStartButtonState);
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+document.getElementById('lb-btn').addEventListener('click', () => {
+  renderLeaderboard();
+  showPage('leaderboard');
+});
+
+document.getElementById('mute-btn').addEventListener('click', () => {
+  isMuted = !isMuted;
+  document.getElementById('icon-sound').classList.toggle('hidden', isMuted);
+  document.getElementById('icon-mute').classList.toggle('hidden', !isMuted);
+});
+
+document.getElementById('admin-btn').addEventListener('click', () => {
+  if (isAdminAuth) {
+    renderAdminList();
+    showPage('admin');
+  } else {
+    showPage('login');
+    document.getElementById('pass-input').value = '';
+    document.getElementById('login-feedback').classList.add('hidden');
+  }
+});
+
+// Leaderboard
+document.getElementById('lb-back-btn').addEventListener('click', () => showPage('cover'));
+document.getElementById('lb-home-btn').addEventListener('click', () => showPage('cover'));
+
+// Result
+document.getElementById('retry-btn').addEventListener('click', startGame);
+document.getElementById('result-home-btn').addEventListener('click', () => showPage('cover'));
+
+// Login — password verification gate: only "8888" grants access to admin panel.
+document.getElementById('login-back-btn').addEventListener('click', () => showPage('cover'));
+document.getElementById('login-btn').addEventListener('click', () => {
+  const pw = document.getElementById('pass-input').value;
+  const fb = document.getElementById('login-feedback');
+  if (pw === ADMIN_PASSWORD) {
+    isAdminAuth = true;
+    fb.classList.add('hidden');
+    renderAdminList();
+    showPage('admin');
+  } else {
+    isAdminAuth = false;
+    fb.className = 'feedback-msg error';
+    fb.textContent = '密碼錯誤！';
+    fb.classList.remove('hidden');
+    document.getElementById('pass-input').value = '';
+  }
+});
+document.getElementById('pass-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+
+// Admin panel — questions
+document.getElementById('admin-back-btn').addEventListener('click', () => showPage('cover'));
+document.getElementById('reset-btn').addEventListener('click', resetToDefault);
+document.getElementById('add-q-btn').addEventListener('click', () => openEditModal(null));
+document.getElementById('scoreadmin-btn').addEventListener('click', openScoreAdminPage);
+
+// Drug quick-select dropdown -> auto-fill drug name field
+document.getElementById('f-drug-select').addEventListener('change', (e) => {
+  if (e.target.value) document.getElementById('f-drug').value = e.target.value;
+});
+// Typing a custom drug name manually keeps the dropdown reflecting reality
+// so the "已使用" marker stays accurate the next time it's opened.
+document.getElementById('f-drug').addEventListener('blur', () => {
+  const val = document.getElementById('f-drug').value.trim();
+  if (val) renderDrugSelectOptions(val);
+});
+
+// Modal: edit/add question
+document.getElementById('modal-q-close').addEventListener('click', closeEditModal);
+document.getElementById('modal-cancel-btn').addEventListener('click', closeEditModal);
+document.getElementById('modal-save-btn').addEventListener('click', saveQuestion);
+document.getElementById('modal-q').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-q')) closeEditModal();
+});
+
+// Admin panel — scores (leaderboard management)
+document.getElementById('scoreadmin-back-btn').addEventListener('click', () => {
+  renderAdminList();
+  showPage('admin');
+});
+document.getElementById('sa-add-btn').addEventListener('click', openAddScoreModal);
+document.getElementById('sa-clear-all-btn').addEventListener('click', clearAllScores);
+document.getElementById('sa-export-csv-btn').addEventListener('click', exportScoresCSV);
+
+// Modal: add score
+document.getElementById('modal-score-close').addEventListener('click', closeAddScoreModal);
+document.getElementById('modal-score-cancel-btn').addEventListener('click', closeAddScoreModal);
+document.getElementById('modal-score-save-btn').addEventListener('click', saveScoreEntry);
+document.getElementById('modal-score').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-score')) closeAddScoreModal();
+});
+
+// Modal: confirm (delete / reset / clear-all / replace-import)
+document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+  const action = pendingConfirmAction;
+  closeConfirmModal();
+  if (action) action();
+});
+document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirmModal);
+document.getElementById('modal-confirm').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-confirm')) closeConfirmModal();
+});
+
+// ─────────────────────────────────────────────
+// BACKUP PAGE
+// ─────────────────────────────────────────────
+let bkImportData = null;
+let bkImportMode = 'merge';
+const BK_IMPORT_BTN_DEFAULT_HTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> 確認匯入資料';
+
+function resetImportButton() {
+  const btn = document.getElementById('bk-do-import');
+  btn.innerHTML = BK_IMPORT_BTN_DEFAULT_HTML;
+  btn.style.background = '';
+}
+
+function openBackupPage() {
+  // Update counts
+  const ts = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  document.getElementById('bk-q-count').textContent = questions.length;
+  document.getElementById('bk-s-count').textContent = scores.length;
+  document.getElementById('bk-filename').textContent = `pacu_backup_${ts}.json`;
+
+  // Reset import section
+  bkImportData = null;
+  bkImportMode = 'merge';
+  document.getElementById('bk-file-input').value = '';
+  document.getElementById('bk-preview').classList.add('hidden');
+  document.getElementById('bk-options').classList.add('hidden');
+  document.getElementById('bk-replace-warn').classList.remove('show');
+  document.getElementById('bk-mode-merge').classList.add('active');
+  document.getElementById('bk-mode-replace').classList.remove('active');
+  document.getElementById('bk-zone-text').textContent = '選擇備份檔案並還原';
+  document.getElementById('bk-zone-sub').textContent = '點擊選擇或拖放 .json 備份檔案至此';
+  document.getElementById('bk-drop-zone').style.borderColor = '';
+  document.getElementById('bk-do-import').disabled = true;
+  resetImportButton();
+
+  showPage('backup');
+}
+
+function bkDoExport() {
+  const ts = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const payload = {
+    _meta: {
+      app: 'PACU DEATH RACE',
+      version: '3.9.5',
+      exportedAt: new Date().toISOString(),
+      questionCount: questions.length,
+      scoreCount: scores.length
+    },
+    questions,
+    scores
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pacu_backup_${ts}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // Visual feedback on button
+  const btn = document.getElementById('bk-do-export');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 下載完成！';
+  btn.style.background = '#059669';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 2500);
+}
+
+function bkParseFile(file) {
+  resetImportButton();
+  if (!file || !file.name.endsWith('.json')) {
+    showBkError('請選擇有效的 .json 備份檔案');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data._meta || data._meta.app !== 'PACU DEATH RACE')
+        throw new Error('非本系統備份檔案（_meta 驗證失敗）');
+      if (!Array.isArray(data.questions) || !Array.isArray(data.scores))
+        throw new Error('格式錯誤：缺少 questions 或 scores 欄位');
+      data.questions.forEach((q, idx) => {
+        if (!q || typeof q !== 'object' || !q.drug || !q.question || !q.answer || !Array.isArray(q.options) || q.options.length < 2) {
+          throw new Error(`第 ${idx+1} 題資料欄位不完整，檔案可能已損毀`);
+        }
+      });
+
+      bkImportData = data;
+      const exportTime = data._meta.exportedAt
+        ? new Date(data._meta.exportedAt).toLocaleString('zh-TW') : '不明';
+
+      const prev = document.getElementById('bk-preview');
+      prev.className = 'bk-preview ok';
+      prev.innerHTML = `
+        <strong>✓ 檔案驗證通過</strong> — ${file.name}<br>
+        匯出時間：${exportTime}<br>
+        包含題庫：<strong>${data.questions.length} 題</strong> &nbsp;｜&nbsp; 包含成績：<strong>${data.scores.length} 筆</strong>
+      `;
+      prev.classList.remove('hidden');
+
+      document.getElementById('bk-zone-text').textContent = `✓ ${file.name}`;
+      document.getElementById('bk-zone-sub').textContent = '驗證通過，請確認下方匯入選項';
+      document.getElementById('bk-drop-zone').style.borderColor = '#10b981';
+      document.getElementById('bk-options').classList.remove('hidden');
+      document.getElementById('bk-do-import').disabled = false;
+
+    } catch(err) {
+      bkImportData = null;
+      showBkError('❌ ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showBkError(msg) {
+  const prev = document.getElementById('bk-preview');
+  prev.className = 'bk-preview error';
+  prev.textContent = msg;
+  prev.classList.remove('hidden');
+  document.getElementById('bk-options').classList.add('hidden');
+  document.getElementById('bk-drop-zone').style.borderColor = '#dc2626';
+  document.getElementById('bk-do-import').disabled = true;
+}
+
+function bkDoImport() {
+  if (!bkImportData) return;
+
+  if (bkImportMode === 'replace') {
+    const parts = [];
+    if (bkImportData.questions.length > 0) parts.push(`現有 ${questions.length} 題題庫`);
+    if (bkImportData.scores.length > 0) parts.push(`現有 ${scores.length} 筆成績`);
+    openConfirmModal({
+      title: '取代模式確認',
+      message: `將清除 ${parts.join(' 與 ')}，並以備份內容取代。此操作無法復原，確定繼續嗎？`,
+      okText: '確認取代',
+      onConfirm: bkPerformImport
+    });
+  } else {
+    bkPerformImport();
+  }
+}
+
+function bkPerformImport() {
+  if (!bkImportData) return;
+  try {
+    const hasQ = bkImportData.questions.length > 0;
+    const hasS = bkImportData.scores.length > 0;
+
+    let qAdded = 0, qSkipped = 0, sAdded = 0;
+
+    if (hasQ) {
+      if (bkImportMode === 'replace') {
+        questions = bkImportData.questions.map((q,i) => ({ ...q, id: q.id || ('imp_'+Date.now()+'_'+i) }));
+        qAdded = questions.length;
+      } else {
+        const existing = new Set(questions.map(q => q.question.trim()));
+        bkImportData.questions.forEach((q,i) => {
+          if (existing.has(q.question.trim())) { qSkipped++; }
+          else { questions.push({ ...q, id: q.id || ('imp_'+Date.now()+'_'+i) }); qAdded++; }
+        });
+      }
+      saveQuestions();
+    }
+
+    if (hasS) {
+      if (bkImportMode === 'replace') {
+        scores = [...bkImportData.scores];
+      } else {
+        scores.push(...bkImportData.scores);
+        scores.sort((a,b) => (b.totalScore||0) - (a.totalScore||0));
+        if (scores.length > 50) scores = scores.slice(0,50);
+      }
+      // Ensure every score (including freshly imported legacy entries) has an id.
+      scores.forEach((s, i) => { if (!s.id) s.id = 'score_' + Date.now() + '_' + i + '_' + Math.floor(Math.random()*10000); });
+      sAdded = bkImportData.scores.length;
+      saveScores();
+    }
+
+    // Show success state
+    const btn = document.getElementById('bk-do-import');
+    const parts = [];
+    if (hasQ) parts.push(`題庫新增 ${qAdded} 題${qSkipped ? `（略過重複 ${qSkipped} 題）` : ''}`);
+    if (hasS) parts.push(`成績匯入 ${sAdded} 筆`);
+
+    const prev = document.getElementById('bk-preview');
+    prev.className = 'bk-preview ok';
+    prev.innerHTML = `<strong>✓ 匯入完成！</strong><br>${parts.join('<br>')}`;
+
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 匯入成功！';
+    btn.disabled = true;
+    btn.style.background = '#059669';
+
+    // Update counts
+    document.getElementById('bk-q-count').textContent = questions.length;
+    document.getElementById('bk-s-count').textContent = scores.length;
+    updateStartButtonState();
+    bkImportData = null;
+  } catch (err) {
+    showBkError('❌ 匯入失敗，檔案內容可能不完整：' + err.message);
+  }
+}
+
+// ─────────────────────────────────────────────
+// EVENT BINDINGS — BACKUP PAGE
+// ─────────────────────────────────────────────
+document.getElementById('backup-page-btn').addEventListener('click', openBackupPage);
+document.getElementById('backup-back-btn').addEventListener('click', () => {
+  renderAdminList();
+  showPage('admin');
+});
+document.getElementById('bk-do-export').addEventListener('click', bkDoExport);
+document.getElementById('bk-do-import').addEventListener('click', bkDoImport);
+
+// File input
+document.getElementById('bk-file-input').addEventListener('change', e => {
+  if (e.target.files[0]) bkParseFile(e.target.files[0]);
+});
+
+// Drag & drop
+const bkDrop = document.getElementById('bk-drop-zone');
+bkDrop.addEventListener('dragover', e => { e.preventDefault(); bkDrop.classList.add('drag-over'); });
+bkDrop.addEventListener('dragleave', () => bkDrop.classList.remove('drag-over'));
+bkDrop.addEventListener('drop', e => {
+  e.preventDefault();
+  bkDrop.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) bkParseFile(e.dataTransfer.files[0]);
+});
+
+// Mode toggle
+document.getElementById('bk-mode-merge').addEventListener('click', () => {
+  bkImportMode = 'merge';
+  document.getElementById('bk-mode-merge').classList.add('active');
+  document.getElementById('bk-mode-replace').classList.remove('active');
+  document.getElementById('bk-replace-warn').classList.remove('show');
+});
+document.getElementById('bk-mode-replace').addEventListener('click', () => {
+  bkImportMode = 'replace';
+  document.getElementById('bk-mode-replace').classList.add('active');
+  document.getElementById('bk-mode-merge').classList.remove('active');
+  document.getElementById('bk-replace-warn').classList.add('show');
+});
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+loadData();
+showPage('cover');
+updateStartButtonState();
+</script>
+</body>
+</html>
