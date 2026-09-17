@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PACU恢復室藥物學習平台</title>
+
+<title>PACU數位藥物學習中心</title>
 
 <style>
 
@@ -32,33 +34,66 @@ margin-bottom:10px;
 
 header p{
 font-size:18px;
+opacity:.9;
+}
+
+.header-badges{
+margin-top:15px;
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.header-badges span{
+background:rgba(255,255,255,.15);
+padding:8px 14px;
+border-radius:30px;
+font-size:14px;
 }
 
 .grid{
 max-width:1200px;
 margin:auto;
-padding:25px;
+padding:30px;
+
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:20px;
+gap:25px;
 }
 
 .card{
 background:white;
-border-radius:20px;
-padding:25px;
-min-height:220px;
+border-radius:24px;
+padding:30px;
+min-height:250px;
+
 box-shadow:0 4px 12px rgba(0,0,0,.08);
+
 transition:.3s;
+
+cursor:pointer;
+
+position:relative;
 }
 
 .card:hover{
-transform:translateY(-5px);
+transform:translateY(-6px);
+}
+
+.card::after{
+content:"➜";
+position:absolute;
+right:25px;
+bottom:20px;
+font-size:28px;
+color:#2B5C98;
+opacity:.4;
 }
 
 .card h2{
 color:#2B5C98;
-font-size:28px;
+font-size:36px;
 margin-bottom:20px;
 }
 
@@ -73,10 +108,11 @@ background:#2B5C98;
 color:white;
 text-decoration:none;
 text-align:center;
-padding:12px;
+padding:14px;
 border-radius:12px;
 margin-bottom:12px;
 font-weight:bold;
+font-size:18px;
 }
 
 .video-btn:hover{
@@ -94,26 +130,44 @@ font-size:14px;
 
 .grid{
 grid-template-columns:1fr;
+padding:20px;
 }
 
 header h1{
 font-size:30px;
 }
 
+.card h2{
+font-size:30px;
+}
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
 
-<h1>PACU恢復室藥物學習平台</h1>
+<h1>🏥 PACU數位藥物學習中心</h1>
 
 <p>
-Post-Anesthesia Care Unit Drug Learning Center
+Post-Anesthesia Care Unit Digital Drug Learning Center
 </p>
+
+<div class="header-badges">
+
+<span>🎥 教學影片</span>
+
+<span>💊 藥命關頭</span>
+
+<span>🧰 藥物工具箱</span>
+
+<span>📱 藥物工具箱APP</span>
+
+</div>
 
 </header>
 
@@ -131,7 +185,7 @@ target="_blank">
 </a>
 
 <p>
-常備藥物與急救車藥物介紹
+常備藥物與急救車藥物與管制藥物介紹
 </p>
 
 <br>
@@ -143,15 +197,14 @@ target="_blank">
 </a>
 
 <p>
-管制藥物與急救車藥物配置口訣
+常備藥物與急救車藥物與管制藥物介紹
 </p>
 
 </div>
 
 <!-- 藥命關頭 -->
 <div class="card"
-onclick="window.location.href='deathrace.html';"
-style="cursor:pointer;">
+onclick="window.location.href='deathrace.html';">
 
 <h2>💊 藥命關頭</h2>
 
@@ -163,26 +216,19 @@ style="cursor:pointer;">
 
 <!-- 藥物工具箱 -->
 <div class="card"
-
-onclick="window.location.href='toolbox.html';"
-
-style="cursor:pointer;">
+onclick="window.location.href='toolbox.html';">
 
 <h2>🧰 藥物工具箱</h2>
- 
+
 <p>
-
-37種PACU常用藥物
-
+網頁版藥物查詢
 </p>
- 
+
 </div>
 
 <!-- APP -->
-
 <div class="card"
-onclick="window.location.href='app.html';"
-style="cursor:pointer;">
+onclick="window.location.href='app.html';">
 
 <h2>📱 藥物工具箱 APP</h2>
 
@@ -195,8 +241,11 @@ style="cursor:pointer;">
 </div>
 
 <div class="footer">
-PACU Drug Learning Platform © 2026
+
+PACU Drug Learning Center © 2026
+
 </div>
 
 </body>
+
 </html>
