@@ -83,16 +83,6 @@ font-weight:bold;
 background:#1f487a;
 }
 
-.card-link{
-text-decoration:none;
-color:inherit;
-display:block;
-}
-
-.card-link .card{
-cursor:pointer;
-}
-
 .footer{
 text-align:center;
 padding:25px;
@@ -118,8 +108,13 @@ font-size:30px;
 <body>
 
 <header>
+
 <h1>PACU恢復室藥物學習平台</h1>
-<p>Post-Anesthesia Care Unit Drug Learning Center</p>
+
+<p>
+Post-Anesthesia Care Unit Drug Learning Center
+</p>
+
 </header>
 
 <div class="grid">
@@ -154,9 +149,9 @@ target="_blank">
 </div>
 
 <!-- 藥命關頭 -->
-<a href="deathrace.html" class="card-link">
-
-<div class="card">
+<div class="card"
+onclick="window.location.href='deathrace.html';"
+style="cursor:pointer;">
 
 <h2>💊 藥命關頭</h2>
 
@@ -165,8 +160,6 @@ target="_blank">
 </p>
 
 </div>
-
-</a>
 
 <!-- 藥物工具箱 -->
 <div class="card">
