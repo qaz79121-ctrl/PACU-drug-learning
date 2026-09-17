@@ -1,1 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>恢復室藥物快查</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF2F1;
+  --panel:#FFFFFF;
+  --panel-2:#F4F7F6;
+  --ink:#0F2C29;
+  --ink-soft:#4B6360;
+  --ink-faint:#7C918D;
+  --hairline:#DCE6E3;
+  --teal:#0E6E63;
+  --teal-deep:#0A4F47;
+  --teal-tint:#E1F0EC;
+  --high:#B3271A;
+  --high-tint:#FBE9E6;
+  --medium:#9A6B0A;
+  --medium-tint:#FBF1DE;
+  --gold:#C7962E;
+  --shadow:0 1px 2px rgba(15,44,41,.06), 0 8px 20px -12px rgba(15,44,41,.18);
+  --radius:16px;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1817;
+    --panel:#122522;
+    --panel-2:#0F2020;
+    --ink:#EAF3F1;
+    --ink-soft:#A9C2BE;
+    --ink-faint:#77938E;
+    --hairline:#1E3A36;
+    --teal:#3FBFA9;
+    --teal-deep:#7FE0CC;
+    --teal-tint:#123531;
+    --high:#F0938A;
+    --high-tint:#331813;
+    --medium:#E6BE6E;
+    --medium-tint:#332608;
+    --gold:#E6BE6E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 24px -14px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1817;
+  --panel:#122522;
+  --panel-2:#0F2020;
+  --ink:#EAF3F1;
+  --ink-soft:#A9C2BE;
+  --ink-faint:#77938E;
+  --hairline:#1E3A36;
+  --teal:#3FBFA9;
+  --teal-deep:#7FE0CC;
+  --teal-tint:#123531;
+  --high:#F0938A;
+  --high-tint:#331813;
+  --medium:#E6BE6E;
+  --medium-tint:#332608;
+  --gold:#E6BE6E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 24px -14px rgba(0,0,0,.6);
+}
 
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:var(--bg);}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+}
+
+/* ===== App shell ===== */
+.app{
+  width:100%;
+  max-width:480px;
+  min-height:100vh;
+  background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+/* -- Top bar -- */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  background:var(--teal-deep);
+  color:#F4FBF9;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  border:1px solid rgba(255,255,255,.18);
+}
+.brand-text h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.2px;}
+.brand-text p{margin:1px 0 0;font-size:11.5px;color:rgba(244,251,249,.68);}
+.count-pill{
+  font-family:var(--mono);
+  font-size:12px;font-weight:600;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  color:#F4FBF9;
+  padding:5px 10px;border-radius:999px;
+  white-space:nowrap;
+}
+
+.search-wrap{margin-top:12px;position:relative;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.65;}
+.search-input{
+  width:100%;
+  padding:11px 14px 11px 38px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.1);
+  color:#F4FBF9;
+  font-size:14.5px;
+  font-family:var(--sans);
+  outline:none;
+}
+.search-input::placeholder{color:rgba(244,251,249,.55);}
+.search-input:focus{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.35);}
+
+/* -- Filter chips -- */
+.chiprow{
+  display:flex;flex-wrap:wrap;gap:7px;padding:10px 18px 2px;
+}
+.chip{
+  flex:0 0 auto;
+  padding:7px 13px;
+  border-radius:999px;
+  border:1px solid var(--hairline);
+  background:var(--panel);
+  color:var(--ink-soft);
+  font-size:12.5px;
+  font-weight:500;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .15s, color .15s, border-color .15s;
+}
+.chip.active{
+  background:var(--teal);
+  border-color:var(--teal);
+  color:#fff;
+}
+.chip.risk-high-chip.active{background:var(--high);border-color:var(--high);}
+.chip.risk-medium-chip.active{background:var(--medium);border-color:var(--medium);}
+
+/* -- Segmented tabs (全部/收藏) -- */
+.segtabs{
+  display:flex;gap:6px;margin:10px 18px 2px;
+  background:var(--panel-2);
+  padding:4px;border-radius:12px;
+  border:1px solid var(--hairline);
+}
+.segtab{
+  flex:1;text-align:center;padding:8px 6px;border-radius:9px;
+  font-size:13px;font-weight:600;color:var(--ink-faint);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.segtab.active{background:var(--panel);color:var(--teal-deep);box-shadow:var(--shadow);}
+
+/* -- List -- */
+.list{padding:14px 14px 96px;display:flex;flex-direction:column;gap:10px;flex:1;}
+
+.card{
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:1px solid var(--hairline);
+  overflow:hidden;
+  position:relative;
+}
+.card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--riskcolor);
+}
+.card-head{
+  padding:13px 14px 13px 18px;
+  display:flex;align-items:flex-start;gap:10px;
+  cursor:pointer;
+}
+.card-head-main{flex:1;min-width:0;}
+.card-name{
+  font-size:15px;font-weight:700;color:var(--ink);
+  line-height:1.35;
+  word-break:break-word;
+}
+.card-meta{
+  display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:6px;
+}
+.badge{
+  font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:3px;
+}
+.badge-cat{background:var(--panel-2);color:var(--ink-soft);border:1px solid var(--hairline);}
+.badge-risk-high{background:var(--high-tint);color:var(--high);}
+.badge-risk-medium{background:var(--medium-tint);color:var(--medium);}
+.card-indication{
+  margin:7px 0 0;font-size:12.5px;color:var(--ink-faint);line-height:1.5;
+}
+.card-indication.clamp{
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-side{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.fav-btn{
+  background:none;border:none;font-size:18px;cursor:pointer;line-height:1;
+  color:var(--ink-faint);padding:2px;
+}
+.fav-btn.active{color:var(--gold);}
+.chev{
+  font-size:11px;color:var(--ink-faint);transition:transform .2s;
+}
+.card.open .chev{transform:rotate(180deg);}
+
+.card-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .28s ease;
+}
+.card.open .card-body{max-height:1400px;}
+.card-body-inner{padding:0 16px 16px 18px;}
+
+.lowdose{
+  background:var(--teal-tint);
+  border:1px solid color-mix(in srgb, var(--teal) 25%, transparent);
+  border-radius:10px;
+  padding:9px 11px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-bottom:11px;
+}
+.lowdose-label{font-size:11px;color:var(--teal-deep);font-weight:600;}
+.lowdose-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--teal-deep);text-align:right;}
+.lowdose-val.na{font-family:var(--sans);font-weight:500;color:var(--ink-faint);font-style:italic;font-size:11.5px;}
+
+.sec{margin-bottom:11px;}
+.sec:last-child{margin-bottom:0;}
+.sec-label{
+  font-size:10.5px;font-weight:700;letter-spacing:.3px;color:var(--ink-faint);
+  margin-bottom:5px;
+}
+.sec-text{font-size:13px;line-height:1.6;color:var(--ink-soft);white-space:pre-line;}
+
+.adr-box{
+  background:var(--high-tint);border-radius:10px;padding:10px 12px;
+}
+.adr-box .sec-label{color:var(--high);}
+.adr-box .sec-text{color:var(--high);}
+
+.warn-list{background:var(--medium-tint);border-radius:10px;padding:10px 12px;}
+.warn-list .sec-label{color:var(--medium);}
+.warn-list ul{margin:0;padding:0;list-style:none;}
+.warn-list li{
+  font-size:12.5px;line-height:1.55;color:var(--medium);
+  padding-left:14px;position:relative;margin-bottom:5px;
+}
+.warn-list li:last-child{margin-bottom:0;}
+.warn-list li::before{content:"▲";position:absolute;left:0;top:1px;font-size:8px;}
+
+.empty{
+  text-align:center;color:var(--ink-faint);padding:60px 20px;font-size:14px;line-height:1.7;
+}
+.empty-emoji{font-size:34px;display:block;margin-bottom:10px;}
+
+/* -- Bottom tab bar -- */
+.tabbar{
+  position:sticky;bottom:0;z-index:30;
+  background:var(--panel);
+  border-top:1px solid var(--hairline);
+  display:flex;
+  padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 8px);
+  box-shadow:0 -6px 18px -14px rgba(15,44,41,.35);
+}
+.tabitem{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 4px;border-radius:10px;cursor:pointer;color:var(--ink-faint);
+}
+.tabitem .ic{font-size:18px;}
+.tabitem .lb{font-size:10.5px;font-weight:600;}
+.tabitem.active{color:var(--teal);}
+
+::-webkit-scrollbar{width:0;height:0;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <div class="brand-mark">🧰</div>
+        <div class="brand-text">
+          <h1>恢復室藥物快查</h1>
+          <p>PACU Drug Quick Reference</p>
+        </div>
+      </div>
+      <div class="count-pill" id="countPill">37 項</div>
+    </div>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search" placeholder="搜尋藥名／適應症／副作用">
+    </div>
+  </div>
+
+  <div class="chiprow" id="catChips"></div>
+  <div class="chiprow" id="riskChips"></div>
+
+  <div class="segtabs">
+    <div class="segtab active" id="tabAll" onclick="setViewMode('all')">全部藥物</div>
+    <div class="segtab" id="tabFav" onclick="setViewMode('fav')">⭐ 我的收藏</div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="tabbar">
+    <div class="tabitem active">
+      <div class="ic">📋</div>
+      <div class="lb">藥物小卡</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= DATA ================= */
+const drugs = [
+{category:"抗凝血藥物",name:"Heparin 25000IU/5ml/Vial",risk:"high",indication:"血栓性栓塞症及其預防,抗凝血或其它臨床用途",adr:["出血","過敏反應(冷顫、蕁麻疹、發燒、鼻炎、氣喘樣的反應)","急性可逆性血小板過少症"],dose:"靜脈注射,間歇性或持續性靜脈輸注或深層皮下注射。",warning:["本藥禁用於：血友病、胃腸道出血性潰瘍、代償失調引起的嚴重高血壓症、中樞神經系統外科手術上、疑似腦出血症、漸近性心內膜炎、甲狀腺手術、疑似惡性腫瘤而有出血危險者、對Heparin Sodium過敏者"],lowDoseConc:"500IU/0.1ml"},
+{category:"止痛藥物",name:"Morphine 10mg/1mL/Amp",risk:"high",indication:"術後中重度疼痛",adr:["呼吸抑制"],dose:"靜脈注射每1~2小時 0.7~10mg",warning:["有依賴的可能性（戒斷症狀).","嗜眠、眩暈.","避免飲酒.","嚴重呼吸抑制、氣喘、肝病禁用"],lowDoseConc:"1mg/0.1ml"},
+{category:"止痛藥物",name:"Fentanyl (0.05mg/mL) 2mL/Amp",risk:"high",indication:"麻醉用藥、急性疼痛之緊急治療",adr:["肌肉僵硬","縮瞳","心跳緩慢","低血壓","噁心","嘔吐","眩暈"],dose:"(請依藥袋指示服用)\n1.注射用藥。\n2.靜脈滴注可使用D5W或NS當溶液；Y-site旁插可使用Lactated Ringer, Hetastarch 6%。",warning:["本藥會排泄到人體乳汁中，因此投與本藥後的24小時內不建議授乳。"],lowDoseConc:"5mcg/0.1ml"},
+{category:"止痛藥物",name:"Pethidine 50mg/1mL/Amp",risk:"high",indication:"鎮痛",adr:["畏光","眩暈","鎮靜","噁心","嘔吐","流汗"],dose:"1.不建議慢性疼痛\n2.不超過48小時或600mg/日",warning:["老年人減量","可能引發癲癇","避免開車","注意姿勢性低血壓"],lowDoseConc:"5mg/0.1ml"},
+{category:"鎮靜藥物",name:"Propofol 200mg/20mL/Amp",risk:"high",indication:"麻醉劑,加護病房使用人工呼吸器之鎮靜,手術和侵襲性檢查鎮靜用",adr:["低血壓","噁心","嘔吐","頭痛","過敏"],dose:"1.靜脈注射。\n2.可混合之輸液或注射液：5% Glucose、0.9% NaCl。",warning:["注射後請勿開車或操作器械或在具有危險性的場合。","不可飲用酒精性飲料。","授乳的母親使用後應暫停授乳24小時。"],lowDoseConc:"10mg/1ml"},
+{category:"急救藥物",name:"Epinephrine 1mg/1mL/Amp",risk:"high",indication:"過敏性休克、心跳停止、支氣管痙攣",adr:["心悸","高血壓","焦躁"],dose:"輸液: D5W, NS",warning:["可能引發心律不整","胸痛須立即評估","可能造成腸損傷使小腸發生阻塞，出血及穿孔"],lowDoseConc:"0.1mg/0.1ml"},
+{category:"心血管藥物",name:"Dopamine 200mg/5mL/Amp",risk:"high",indication:"休克、低血壓、心輸出量不足",adr:["心律不整","高血壓","心悸","頭痛","噁心","周邊血管收縮"],dose:"1.靜脈輸注使用，需使用輸液幫浦控制速率。\n2.依血壓及尿量（腎灌流）調整劑量。",warning:["需使用輸液幫浦精確控制劑量。","外滲可能造成組織壞死，需確保靜脈路徑良好。","高劑量可能導致心律不整及過度血管收縮。","與MAO抑制劑併用時需特別小心（可能加強作用）。"],lowDoseConc:"40mg/1ml"},
+{category:"心血管藥物",name:"Easydopa 400mg/250mL/Bot",risk:"high",indication:"低血壓、休克、心輸出量不足之血壓支持",adr:["心律不整","高血壓","心悸","頭痛","末梢循環不良","噁心"],dose:"1.靜脈輸注使用，需使用輸液幫浦控制速率。\n2.依血壓及臨床反應調整滴速。",warning:["需使用輸液幫浦精確控制輸注速率。","外滲可能造成局部組織壞死，需確認靜脈通路。","可能引起嚴重心律不整，需心電圖監測。","避免與MAO抑制劑併用（可能加強升壓作用）。"],lowDoseConc:"0.16mg/0.1ml"},
+{category:"急救藥物",name:"Atropine 1mg/1mL/Amp",risk:"high",indication:"心搏過緩、迷走神經過度反應、有機磷中毒解毒",adr:["心跳過速","口乾","視力模糊","尿滯留","躁動"],dose:"1.靜脈注射。\n2.成人心搏過緩：每次0.5mg IV，可每3~5分鐘重複，最大3mg。",warning:["青光眼患者慎用","前列腺肥大可能造成尿滯留","過量可能導致譫妄或心律不整"],lowDoseConc:"0.1mg/0.1ml"},
+{category:"急救藥物",name:"Adenosine 6mg/2ml/Vial",risk:"high",indication:"陣發性上室性心動過速（PSVT）之急性治療",adr:["短暫心跳停止","心悸","胸悶","呼吸急促","臉潮紅","頭暈"],dose:"1.快速靜脈推注（IV bolus），需經大靜脈給藥。\n2.給藥後立即以生理食鹽水快速沖洗（flush）。",warning:["可能引起短暫心搏停止或嚴重心律變化，需持續心電圖監測。","給藥必須快速（1–2秒內）推注。","氣喘或支氣管痙攣患者慎用（可能誘發支氣管收縮）。","與茶鹼、咖啡因等會降低效果，與Dipyridamole併用可能增強作用。"],lowDoseConc:"0.3mg/0.1ml"},
+{category:"急救藥物",name:"Ephedrine 40mg/1mL/Amp",risk:"high",indication:"支氣管性氣喘、血管運動神經性鼻炎、過敏性鼻炎、脊椎麻醉導致之急性低血壓",adr:["頭暈","頭痛","焦慮","不規律或加速心跳","失眠","血壓上昇"],dose:"肌肉注射、皮下注射或靜脈注射使用。",warning:["長期使用可能會影響心臟功能","狹角青光眼禁用","服用MAO抑制劑的病人禁用","嚴重高血壓及冠狀動脈疾病禁用"],lowDoseConc:"4mg/0.1ml"},
+{category:"急救藥物",name:"Norepinephrine 4mg/4mL/Amp",risk:"high",indication:"嚴重低血壓、休克（特別是敗血性休克）之血壓支持",adr:["高血壓","心律不整","頭痛","末梢循環不良","焦慮","外滲造成組織壞死"],dose:"1.靜脈輸注使用，需使用輸液幫浦控制速率。\n2.依血壓及臨床反應調整滴速。\n3.建議以D5W或D5NS稀釋，不建議單獨使用NS稀釋(葡萄糖成分有助於維持安定性)。",warning:["需使用輸液幫浦精確控制劑量。","外滲可能造成嚴重組織壞死，建議使用中央靜脈輸注。","需持續監測血壓與心電圖。","停藥需逐步減量，避免反彈性低血壓。"],lowDoseConc:"1mg/1ml"},
+{category:"急救藥物",name:"Sodium Bicarbonate 20mL/Amp",risk:"high",indication:"代謝性酸中毒、心跳停止時矯正酸中毒、高血鉀緊急處理、藥物中毒（如TCA）",adr:["代謝性鹼中毒","低血鉀","鈉負荷過高","體液過多","局部刺激或外滲"],dose:"1.靜脈注射或輸注。\n2.需依血氣分析（ABG）調整劑量。",warning:["快速或過量給藥可能導致代謝性鹼中毒。","可能引起低血鉀，需監測電解質。","避免與鈣劑同時混合（會產生沉澱）。","心肺復甦（CPR）時僅在特定情況下使用（如高血鉀或已知酸中毒）。"],lowDoseConc:"未標示濃度,無法換算(請人工確認)"},
+{category:"急救藥物",name:"Voluven 6% 500 mL/Bot",risk:"high",indication:"血容量不足（如失血或休克）之血容量擴充",adr:["過敏反應","凝血異常","腎功能損害","體液過多","搔癢"],dose:"1.靜脈輸注使用。\n2.依病人血流動力學狀況調整輸注速率與總量。",warning:["可能增加急性腎損傷風險，腎功能不全或重症患者避免使用。","可能影響凝血功能，出血或術後患者需謹慎使用。","有過敏性休克風險，輸注時需嚴密監測。","避免大量快速輸注，以免造成體液過多或肺水腫。"],lowDoseConc:"50ml/0.1bot"},
+{category:"急救藥物",name:"Glucose 50% 20mL/Amp",risk:"medium",indication:"碳水化合物溶液，主要用作由口服無法獲得所需要之營養缺乏病人之卡路里(熱量)及液體來源。",adr:["惡寒顫慄","發燒"],dose:"1.皮下注射：將注射液注於大腿部皮下為佳。\n2.靜脈內注射：尤其是滲透療法及使用大量的糖分時以本法為方便。",warning:["對於重症糖尿病患者宜避免使用","高張液靜脈注射需緩慢施行","大量注射建議加溫後使用"],lowDoseConc:"2ml/0.1Amp"},
+{category:"利尿劑",name:"Fursemide 20mg/2mL/Amp",risk:"medium",indication:"利尿、高血壓、急性肺水腫。",adr:["起立性低血壓(開始治療時)","嘔吐","頭痛","視力模糊","耳鳴","胃腸刺激","便秘","身體不適","白血球過少","貧血","蕁麻疹","對光敏感","多發性紅斑","剝落性皮膚炎","壞死性血管炎","虛弱","尿意頻繁","泌尿道膀胱痙攣","血栓靜脈炎"],dose:"1.輸注液可用生理食鹽水、乳酸林格氏液或5%葡萄糖液製備，必要時應調整酸鹼值。\n2.本注射液為鹼性，勿與高度酸性液混合。\n3.若注射液變黃，勿再使用。\n4.本藥之注射劑以靜脈注射比肌肉注射為好，但靜脈注射宜緩慢進行。\n5.不超過4mg/min速率",warning:["無尿症禁用","肝昏迷禁用","脫水禁用","懷孕早期禁用","嬰孩禁用"],lowDoseConc:"1mg/0.1ml"},
+{category:"心血管藥物",name:"Calglon 10% 10mL/Amp",risk:"medium",indication:"骨形成不全、出血、血清病、氣管支氣喘痙攣性因素、皮膚疾患",adr:["高血鈣"],dose:"1.注射用藥。\n2.避免混合Ceftriaxone。\n3.與酒精混合會沉澱",warning:["腎功能不全的低鈣血症患者","正服用毛地黃配醣體的患者","甲狀腺機能亢進者應小心使用"],lowDoseConc:"1ml/0.1Amp"},
+{category:"類固醇藥物",name:"Dexamethasone 5mg/1mL/Amp",risk:"medium",indication:"類風濕性關節炎、紅斑性狼瘡、皮膚炎、濕疹等",adr:["體液滯留","生長遲緩","高血壓"],dose:"1.肌肉及靜脈注射",warning:["糖尿病需調整用藥","有胃，十二指腸潰瘍之患者,使用時請特別注意"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"抗組織胺藥物",name:"Diphenhydramine 30mg/1ml/Amp",risk:"medium",indication:"過敏性疾患、蕁麻疹、皮膚炎、溼疹",adr:["嗜睡"],dose:"1.皮下、肌肉或靜脈注射",warning:["避免開車或操作機械"],lowDoseConc:"3mg/0.1ml"},
+{category:"止吐藥物",name:"Droperidol 5mg/2mL/Amp",risk:"high",indication:"降低手術及診斷程序造成之噁心、嘔吐",adr:["幻覺","靜坐不能","體溫過高","心跳過速","低血壓"],dose:"靜脈或肌肉注射",warning:["QT延長風險","昏迷病人或Parkinson症患者禁用"],lowDoseConc:"0.25mg/0.1ml"},
+{category:"鎮靜藥物",name:"Midatin 15mg/3mL/Amp",risk:"medium",indication:"鎮靜",adr:["呼吸抑制"],dose:"依醫囑",warning:["避免過量"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"鎮靜藥物",name:"Diazepam 10mg/2mL/Amp",risk:"high",indication:"焦慮、鎮靜、肌肉痙攣、癲癇發作控制、術前鎮靜",adr:["呼吸抑制","嗜睡","低血壓","頭暈","肌肉無力"],dose:"1.靜脈或肌肉注射。\n2.應緩慢靜脈注射以避免呼吸抑制及低血壓。",warning:["可能造成呼吸抑制，特別是與其他鎮靜藥或酒精併用時。","老年人較易發生過度鎮靜及跌倒風險。","避免快速靜脈注射（可能引起呼吸停止）。","長期使用可能產生依賴性與戒斷症狀。"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"類固醇藥物",name:"HydroCortisone 100mg/Vial",risk:"high",indication:"休克,嚴重過敏性疾患",adr:["浮腫","血壓上升"],dose:"1.配製：將2 mL無菌注射用水或生理食鹽水加入瓶中溶解乾粉。\n2.靜脈輸注：將配製好的溶液加入100-1000 mL D5W, D10W, D5LR, D5NS, NS, 1/2NS中輸注。\n3.靜脈或肌肉注射：配製後不須再稀釋，即可注射。如需少量藥液投予，可將100-3000 mg Hydrocortisone加入50 mL上述之稀釋液中進行注射。",warning:["大劑量注射可能會造成血壓升高、鹽及水分滯留並增加鉀的排泄。可能需限制鈉的攝取並補充鉀。"],lowDoseConc:"粉劑需配製,無固定濃度(請人工確認)"},
+{category:"止痛藥物",name:"Ketorolac 30mg/1ml/Amp",risk:"high",indication:"短期（≦5天）使⽤於緩解無法⼝服病⼈之中重度急性疼痛，通常使⽤於⼿術後",adr:["胃腸潰瘍出血及穿孔","手術後出血","急性腎衰竭","肝衰竭"],dose:"1.靜脈或肌肉注射投與，靜脈注射時間不得低於15秒，肌肉注射應採緩慢及深部投與。\n2.適用於短暫（最多五天）中等急性疼痛治療。",warning:["長期使用可能會增加胃潰瘍、腸胃出血或穿孔的危險性。","嚴重腎功能不全患者禁用。","會抑制血小板功能，出血病人或有出血傾向的病人禁用。","不宜與Furosemide、Probenecid、Methotrexate等藥物併用。","孕婦或哺乳婦女禁用。","可能會引起體液滯留，心臟病及高血壓患者應謹慎使用。"],lowDoseConc:"3mg/0.1ml"},
+{category:"心血管藥物",name:"Labetalol 25mg/5ml/Amp",risk:"high",indication:"高血壓",adr:["低血壓","眩暈","嘔吐"],dose:"靜脈注射使用。",warning:["注射液禁忌使用於第二或第三期的心臟傳導阻斷(有放置心律調節器在原位者除外)、心臟休克以及其他伴有嚴重及持續低血壓或嚴重心動徐緩狀況的病人.","有氣喘或障礙性呼吸道病史者不宜使用本藥。"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"心血管藥物",name:"Nicardipine 10mg/10mL/Amp",risk:"high",indication:"高血壓急症、術中或術後血壓控制",adr:["低血壓","頭痛","心悸","潮紅","噁心","靜脈炎"],dose:"1.靜脈滴注使用，需使用輸液幫浦控制速率。\n2.通常由低劑量開始，依血壓反應逐步調整。",warning:["可能造成顯著低血壓，需密切監測血壓變化。","避免快速推注（IV bolus）。","肝功能不全患者需謹慎使用。","與β-blocker併用時需注意心臟抑制作用。"],lowDoseConc:"0.1mg/0.1ml"},
+{category:"心血管藥物",name:"Nitroglycerin 0.6mg/Tab/25t/Bot",risk:"high",indication:"心絞痛、急性冠心症、控制血壓、心衰竭",adr:["低血壓","頭痛","頭暈","臉潮紅","心跳加快"],dose:"1.舌下含服，發作時使用。\n2.可每5分鐘重複一次，最多3次。",warning:["可能導致顯著低血壓，使用後應避免突然站起。","不可與PDE-5抑制劑（如sildenafil）併用，可能造成危險性低血壓。","持續胸痛應立即就醫評估。","應避免暴露於高溫或光照以免藥效降低。"],lowDoseConc:"錠劑,不適用ml換算"},
+{category:"心血管藥物",name:"MILLISROL Inj. 5mg/10mL/Amp",risk:"high",indication:"急性心衰竭、心絞痛、高血壓危象之血壓控制",adr:["低血壓","頭痛","頭暈","心跳加快","臉潮紅"],dose:"1.靜脈輸注使用，需使用NTG SET及輸液幫浦控制速率。\n2.依血壓及臨床反應調整劑量。",warning:["可能造成顯著低血壓，需密切監測血壓。","不可快速推注（IV bolus）。","避免與PDE-5抑制劑併用（可能引發危險性低血壓）。","長時間使用可能產生耐受性。"],lowDoseConc:"0.5mg/1ml"},
+{category:"心血管藥物",name:"Magnesium sulfate 10% 20mL/Amp",risk:"high",indication:"體內鎂離子缺乏時之補充",adr:["休克","心搏過慢","血壓降低","眩暈","嗜睡","嘔吐"],dose:"電解質注射液，請注意使用濃度及劑量。",warning:["硫酸鎂中毒時常引起呼吸停止，應隨時注意血中濃度並給予鈣劑注射解毒。"],lowDoseConc:"10mg/0.1ml"},
+{category:"止吐藥物",name:"Metoclopramide 10mg/2ml/amp",risk:"medium",indication:"預防嘔吐、逆流性消化性食道炎，糖尿病引起之胃腸蠕動異常",adr:["遲發性運動障礙（tardive dyskinesia）","錐體外路徑反應(extrapyramidal reactions)"],dose:"肌肉或靜脈注射。可用輸注液：D5W, D10W, D5NS, NS.",warning:["注射液在使用後，極少數兒童發生嗜睡或輕微肌肉緊張，此種現象為暫時性，停止用藥，保持安靜，症狀即會消失。"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"止吐藥物",name:"Prochlorperazine 5mg/1mL/Amp",risk:"medium",indication:"治療噁心、嘔吐、暈眩（特別是術後或藥物引起）",adr:["嗜睡","頭暈","口乾","低血壓","錐體外症狀（肌張力異常、顫抖）"],dose:"1.靜脈或肌肉注射。\n2.依醫囑給藥，需緩慢注射以減少低血壓風險。",warning:["可能引起錐體外症狀，特別是年輕患者或高劑量時。","老年患者較易出現鎮靜與姿勢性低血壓。","Parkinson病患應避免使用（可能惡化症狀）。","使用後應避免駕駛或操作機械。"],lowDoseConc:"0.5mg/0.1ml"},
+{category:"急救藥物",name:"Neostigmine 0.5mg/1mL/Amp",risk:"medium",indication:"肌無力、消化液分泌機能減退、排尿困難、腸管麻痺",adr:["噁心","下痢","強直","流口水"],dose:"Atropine應隨時準備在側，以做為膽鹼酯酶抑制劑的解毒劑。",warning:["小腸或泌尿道阻塞、局結腸、腹膜炎、急性消化性潰瘍和甲狀腺亢進。"],lowDoseConc:"0.05mg/0.1ml"},
+{category:"心血管藥物",name:"Lidocaine 100mg/5mL/Amp",risk:"high",indication:"心室性不整律之急性治療、局部麻醉",adr:["眩暈","嗜睡"],dose:"靜脈一次給藥法\n成人一次50~100mg (1-2mg/kg) (2%注射液2.5~5ml)以1~2 分鐘的時間，緩慢地靜脈注射。",warning:["有嚴重刺激傳導障礙(完全房室阻斷等)的患者(會有引起心跳停止之虞)"],lowDoseConc:"20mg/1ml"},
+{category:"心血管藥物",name:"Cordarone 150mg/3mL/Amp",risk:"high",indication:"心室性心律不整（VT/VF）、心房顫動、其他嚴重心律不整",adr:["低血壓","心搏過慢","心律不整","噁心","肝功能異常","靜脈炎"],dose:"1.靜脈注射或輸注使用。\n2.依心律狀況及臨床反應調整劑量。\n3.稀釋液只能使用等張葡萄糖溶液，如：5%葡萄糖溶液(D5W)。",warning:["給藥時需持續心電圖監測。","可能造成低血壓或心搏過慢。","長期使用可能影響肺、肝及甲狀腺功能。","避免快速靜脈推注（可能引起血壓下降）。"],lowDoseConc:"50mg/1ml"},
+{category:"呼吸道藥物",name:"Salbutamol 5mg/2.5mL/Amp",risk:"medium",indication:"支氣管氣喘、支氣管痙攣、COPD急性發作",adr:["心悸","顫抖","低血鉀","頭痛","焦躁"],dose:"1.霧化吸入（nebulization）使用。\n2.可依病況重複給藥。",warning:["可能引起心跳加快及心悸，心臟病患者需謹慎使用。","可能造成低血鉀，尤其大量或重複使用時。","使用後若症狀未改善或惡化應立即評估。","避免過量使用以免產生心血管副作用。"],lowDoseConc:"1mg/0.5ml"},
+{category:"利尿劑",name:"Mannitol 20% 100mL/BT",risk:"high",indication:"降低顱內壓、腦水腫、急性青光眼、促進利尿",adr:["低血壓","電解質不平衡","脫水","頭痛","噁心","腎功能惡化"],dose:"1.靜脈輸注使用，依醫囑調整劑量及速率。\n2.使用前應確認無結晶，必要時溫溶後使用。",warning:["使用時需監測血壓、尿量及電解質。","腎功能不全或無尿患者應避免使用。","可能導致體液與電解質失衡。","快速輸注可能引起低血壓或肺水腫。"],lowDoseConc:"10ml/0.1BT"},
+{category:"止痛藥物",name:"Nalbuphine 10mg/1ml/Amp",risk:"medium",indication:"解除中度到嚴重疼痛,麻醉補助劑",adr:["鎮靜","出汗","嘔吐","噁心","頭暈","眩暈","頭痛"],dose:"皮下、肌肉或靜脈注射。",warning:["長期使用後突然停藥可能引起戒斷症狀，如腹部痙攣、噁心、嘔吐、流淚、鼻溢、憂鬱、不安、體溫昇高或毛豎起。","具有鎮靜作用，開車或操作器械應小心。"],lowDoseConc:"1mg/0.1ml"}
+];
+
+const categories = ["全部","止痛藥物","鎮靜藥物","急救藥物","心血管藥物","呼吸道藥物","止吐藥物","類固醇藥物","抗組織胺藥物","抗凝血藥物","利尿劑"];
+
+/* ================= STATE ================= */
+let state = {
+  keyword:"",
+  category:"全部",
+  risk:"all",
+  view:"all", // all | fav
+  openIndex: new Set()
+};
+
+function escapeHtml(str){
+  if(str===null||str===undefined) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* ================= FAVORITES (per-device, local only) ================= */
+const FAV_KEY = "pacu_drug_favs_v1";
+function loadFavs(){
+  try{
+    const raw = localStorage.getItem(FAV_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  }catch(e){ return new Set(); }
+}
+function saveFavs(set){
+  try{ localStorage.setItem(FAV_KEY, JSON.stringify([...set])); }catch(e){}
+}
+let favs = loadFavs();
+
+/* ================= RENDER: chips ================= */
+function renderChips(){
+  const catEl = document.getElementById("catChips");
+  catEl.innerHTML = categories.map(c=>
+    `<div class="chip ${state.category===c?'active':''}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</div>`
+  ).join("");
+  catEl.querySelectorAll(".chip").forEach(el=>{
+    el.addEventListener("click", ()=>{ state.category = el.dataset.cat; render(); });
+  });
+
+  const riskEl = document.getElementById("riskChips");
+  const riskDefs = [
+    {key:"all", label:"全部風險", cls:""},
+    {key:"high", label:"🚨 高風險", cls:"risk-high-chip"},
+    {key:"medium", label:"⚠️ 注意", cls:"risk-medium-chip"}
+  ];
+  riskEl.innerHTML = riskDefs.map(r=>
+    `<div class="chip ${r.cls} ${state.risk===r.key?'active':''}" data-risk="${r.key}">${r.label}</div>`
+  ).join("");
+  riskEl.querySelectorAll(".chip").forEach(el=>{
+    el.addEventListener("click", ()=>{ state.risk = el.dataset.risk; render(); });
+  });
+}
+
+function setViewMode(mode){
+  state.view = mode;
+  document.getElementById("tabAll").classList.toggle("active", mode==="all");
+  document.getElementById("tabFav").classList.toggle("active", mode==="fav");
+  render();
+}
+
+/* ================= RENDER: list ================= */
+function matchDrug(d, idx){
+  if(state.view==="fav" && !favs.has(idx)) return false;
+  if(state.category!=="全部" && d.category!==state.category) return false;
+  if(state.risk!=="all" && d.risk!==state.risk) return false;
+  if(state.keyword){
+    const hay = (d.name+d.indication+d.adr.join(" ")+d.dose+d.warning.join(" ")).toLowerCase();
+    if(!hay.includes(state.keyword)) return false;
+  }
+  return true;
+}
+
+function lowDoseIsNA(v){
+  return v && (v.includes("無法換算") || v.includes("不適用") || v.includes("無固定濃度"));
+}
+
+function render(){
+  renderChips();
+  const listEl = document.getElementById("list");
+  let html = "";
+  let shown = 0;
+
+  drugs.forEach((d, idx)=>{
+    if(!matchDrug(d, idx)) return;
+    shown++;
+    const isOpen = state.openIndex.has(idx);
+    const isFav = favs.has(idx);
+    const riskColor = d.risk==="high" ? "var(--high)" : "var(--medium)";
+    const riskBadge = d.risk==="high"
+      ? `<span class="badge badge-risk-high">🚨 高風險</span>`
+      : `<span class="badge badge-risk-medium">⚠️ 注意</span>`;
+    const naClass = lowDoseIsNA(d.lowDoseConc) ? "na" : "";
+    const lowDoseText = d.lowDoseConc ? escapeHtml(d.lowDoseConc) : "未提供";
+
+    html += `
+    <div class="card ${isOpen?'open':''}" style="--riskcolor:${riskColor}">
+      <div class="card-head" data-idx="${idx}">
+        <div class="card-head-main">
+          <div class="card-name">${escapeHtml(d.name)}</div>
+          <div class="card-meta">
+            <span class="badge badge-cat">${escapeHtml(d.category)}</span>
+            ${riskBadge}
+          </div>
+          <div class="card-indication ${isOpen?'':'clamp'}">${escapeHtml(d.indication)}</div>
+        </div>
+        <div class="card-side">
+          <button class="fav-btn ${isFav?'active':''}" data-fav="${idx}" aria-label="收藏">${isFav?'★':'☆'}</button>
+          <div class="chev">▾</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="lowdose">
+            <span class="lowdose-label">低劑量濃度（不稀釋）</span>
+            <span class="lowdose-val ${naClass}">${lowDoseText}</span>
+          </div>
+          <div class="sec adr-box">
+            <div class="sec-label">副作用</div>
+            <div class="sec-text">${d.adr.map(escapeHtml).join("、")}</div>
+          </div>
+          <div class="sec">
+            <div class="sec-label" style="color:var(--ink-faint);">用藥方式</div>
+            <div class="sec-text">${escapeHtml(d.dose)}</div>
+          </div>
+          <div class="sec warn-list">
+            <div class="sec-label">注意事項</div>
+            <ul>${d.warning.map(w=>`<li>${escapeHtml(w)}</li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  if(shown===0){
+    const msg = state.view==="fav"
+      ? "尚未收藏任何藥物<br>點卡片右上角 ☆ 即可加入收藏"
+      : "查無符合條件的藥物<br>請調整搜尋字詞或篩選條件";
+    html = `<div class="empty"><span class="empty-emoji">😶‍🌫️</span>${msg}</div>`;
+  }
+
+  listEl.innerHTML = html;
+  document.getElementById("countPill").textContent = shown + " 項";
+
+  listEl.querySelectorAll(".card-head").forEach(el=>{
+    el.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
+      const idx = Number(el.dataset.idx);
+      if(state.openIndex.has(idx)) state.openIndex.delete(idx);
+      else state.openIndex.add(idx);
+      render();
+    });
+  });
+  listEl.querySelectorAll(".fav-btn").forEach(el=>{
+    el.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const idx = Number(el.dataset.fav);
+      if(favs.has(idx)) favs.delete(idx); else favs.add(idx);
+      saveFavs(favs);
+      render();
+    });
+  });
+}
+
+document.getElementById("search").addEventListener("input", (e)=>{
+  state.keyword = e.target.value.trim().toLowerCase();
+  render();
+});
+
+document.getElementById("countPill").textContent = drugs.length + " 項";
+render();
+</script>
+</body>
+</html>
