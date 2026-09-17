@@ -1,42 +1,86 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PACU藥物學習平台</title>
+
+<title>PACU恢復室藥物學習平台</title>
 
 <style>
+
 body{
-    font-family: Arial, sans-serif;
-    background:#f5f7fa;
     margin:0;
-    padding:0;
+    font-family:"Microsoft JhengHei",sans-serif;
+    background:#f5f7fa;
 }
 
 header{
-    background:#005B96;
+    background:#2b5c98;
     color:white;
     text-align:center;
-    padding:30px;
+    padding:40px 20px;
 }
 
-section{
-    max-width:1000px;
+header h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+header p{
+    font-size:20px;
+}
+
+.container{
+    max-width:1200px;
     margin:auto;
     padding:20px;
 }
 
 .card{
     background:white;
-    border-radius:10px;
-    padding:20px;
+    border-radius:15px;
+    padding:25px;
     margin-bottom:20px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
 }
 
 h2{
-    color:#005B96;
+    color:#2b5c98;
+    margin-top:0;
 }
+
+.item{
+    padding:10px 0;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
+
+a{
+    text-decoration:none;
+    color:#0077cc;
+    font-weight:bold;
+}
+
+a:hover{
+    color:#005999;
+}
+
+.footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+    font-size:14px;
+}
+
 </style>
 
 </head>
@@ -44,47 +88,82 @@ h2{
 <body>
 
 <header>
+
 <h1>PACU恢復室藥物學習平台</h1>
-<p>Post-Anesthesia Care Unit Drug Learning Center</p>
+
+<p>
+Post-Anesthesia Care Unit Drug Learning Center
+</p>
+
 </header>
 
-<section>
+<div class="container">
 
 <div class="card">
+
 <h2>🎥 PACU藥物教學影片</h2>
 
-<p>
-<a href="https://youtu.be/4_DphJGAFXI
-▶ 點我觀看完整教學影片
-</a>
-</p>
+<div class="item">
+▶ PACU-drug-learning Part 1<br>
+常備藥物與急救車藥物介紹
+</div>
 
-<p>
-PACU常用藥物教育訓練
-</p>
+<div class="item">
+▶ PACU-drug-learning Part 2<br>
+管制藥物與急救車藥物配置口訣
+</div>
 
 </div>
 
 <div class="card">
-<h2>💊 藥命關頭</h2>
-<p>情境式RPG學習系統</p>
+
+<h2>💊 藥命關頭 💊</h2>
+
+<div class="item">
+情境式藥物學習遊戲
+</div>
+
 </div>
 
 <div class="card">
-<h2>🧰 藥物工具箱</h2>
-<p>37種PACU常用藥物</p>
+
+<h2>🧰 藥物工具箱 🧰</h2>
+
+<div class="item">
+37種PACU常用藥物
+</div>
+
 </div>
 
 <div class="card">
+
 <h2>📱 藥物工具箱 App</h2>
-<p>手機版藥物學習系統</p>
+
+<div class="item">
+手機版藥物查詢系統
+</div>
+
 </div>
 
 <div class="card">
+
 <h2>📝 測驗系統</h2>
 
-<p>📖 護理人員藥物認知評核表</p>
+<div class="item">
+📖 護理人員藥物認知評核表
+</div>
 
-<p>✅ 護理人員正確給藥態度量表</p>
+<div class="item">
+✅ 護理人員正確給藥態度量表
+</div>
 
 </div>
+
+</div>
+
+<div class="footer">
+PACU Drug Learning Platform © 2026
+</div>
+
+</body>
+</html>
