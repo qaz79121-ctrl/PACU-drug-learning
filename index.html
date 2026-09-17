@@ -9,76 +9,119 @@
 
 <style>
 
-body{
+*{
     margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
     font-family:"Microsoft JhengHei",sans-serif;
     background:#f5f7fa;
 }
 
 header{
-    background:#2b5c98;
+
+    background:#2B5C98;
     color:white;
     text-align:center;
     padding:40px 20px;
+
 }
 
 header h1{
-    font-size:40px;
+
+    font-size:42px;
     margin-bottom:10px;
+
 }
 
 header p{
+
     font-size:20px;
+
 }
 
 .container{
+
     max-width:1200px;
     margin:auto;
-    padding:20px;
+    padding:25px;
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+
 }
 
 .card{
+
     background:white;
-    border-radius:15px;
-    padding:25px;
-    margin-bottom:20px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    border-radius:20px;
+    padding:30px;
+    min-height:220px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
     transition:0.3s;
+
 }
 
 .card:hover{
-    transform:translateY(-3px);
+
+    transform:translateY(-5px);
+
 }
 
-h2{
-    color:#2b5c98;
-    margin-top:0;
+.card h2{
+
+    color:#2B5C98;
+    margin-bottom:20px;
+    font-size:32px;
+
 }
 
-.item{
-    padding:10px 0;
-    border-bottom:1px solid #e5e5e5;
-}
+.card p{
 
-.item:last-child{
-    border-bottom:none;
-}
+    font-size:22px;
+    line-height:1.8;
 
-a{
-    text-decoration:none;
-    color:#0077cc;
-    font-weight:bold;
-}
-
-a:hover{
-    color:#005999;
 }
 
 .footer{
+
     text-align:center;
-    padding:20px;
+    padding:30px;
     color:#666;
-    font-size:14px;
+
+}
+
+@media(max-width:768px){
+
+.container{
+
+    grid-template-columns:1fr;
+
+}
+
+header h1{
+
+    font-size:30px;
+
+}
+
+.card h2{
+
+    font-size:26px;
+
+}
+
+.card p{
+
+    font-size:18px;
+
+}
+
 }
 
 </style>
@@ -101,68 +144,78 @@ Post-Anesthesia Care Unit Drug Learning Center
 
 <div class="card">
 
-<h2>🎥 PACU藥物教學影片</h2>
+<h2>🎥 教學影片</h2>
 
-<div class="item">
+<p>
 ▶ PACU-drug-learning Part 1<br>
 常備藥物與急救車藥物介紹
-</div>
+</p>
 
-<div class="item">
+<br>
+
+<p>
 ▶ PACU-drug-learning Part 2<br>
 管制藥物與急救車藥物配置口訣
-</div>
+</p>
 
 </div>
 
 <div class="card">
 
-<h2>💊 藥命關頭 💊</h2>
+<h2>💊 藥命關頭</h2>
 
-<div class="item">
+<p>
 情境式藥物學習遊戲
-</div>
+</p>
 
 </div>
 
 <div class="card">
 
-<h2>🧰 藥物工具箱 🧰</h2>
+<h2>🧰 藥物工具箱</h2>
 
-<div class="item">
-網頁版版藥物查詢系統
-</div>
+<p>
+37種PACU常用藥物
+</p>
 
 </div>
 
 <div class="card">
 
-<h2>📱 藥物工具箱 App</h2>
+<h2>📱 工具箱 App</h2>
 
-<div class="item">
+<p>
 手機版藥物查詢系統
-</div>
+</p>
 
 </div>
 
 <div class="card">
 
-<h2>📝 測驗系統</h2>
+<h2>📝 藥物認知</h2>
 
-<div class="item">
-📖 護理人員藥物認知評核表
+<p>
+護理人員藥物認知評核表
+</p>
+
 </div>
 
-<div class="item">
-✅ 護理人員正確給藥態度量表
-</div>
+<div class="card">
+
+<h2>✅ 給藥態度</h2>
+
+<p>
+護理人員正確給藥態度量表
+</p>
 
 </div>
 
 </div>
 
 <div class="footer">
+
 PACU Drug Learning Platform © 2026
+
 </div>
 
 </body>
