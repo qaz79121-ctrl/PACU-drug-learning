@@ -304,14 +304,20 @@ MOD-01 ・ 教學影片
 
 <a class="video-btn"
 href="https://youtu.be/pYtL-s_E13I"
-target="_blank">
+target="_blank"
+onclick="trackPart1()">
+
 ▶ PACU-drug-learning Part 1
+
 </a>
 
 <a class="video-btn"
 href="https://youtu.be/oOXi-HwLcUI"
-target="_blank">
+target="_blank"
+onclick="trackPart2()">
+
 ▶ PACU-drug-learning Part 2
+
 </a>
 
 </div>
@@ -388,7 +394,25 @@ onclick="window.location.href='app.html';">
 PACU Drug Learning Center © 2026
 
 </div>
+<script>
 
+function trackPart1(){
+
+    gtag('event','video_view',{
+        video_name:'Part1'
+    });
+
+}
+
+function trackPart2(){
+
+    gtag('event','video_view',{
+        video_name:'Part2'
+    });
+
+}
+
+</script>
 </body>
 
 </html>
