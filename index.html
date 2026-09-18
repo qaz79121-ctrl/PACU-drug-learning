@@ -329,7 +329,7 @@ MOD-05 ・ 藥物換算工具
 </div>
 
 <div class="large-card"
-onclick="window.location.href='calculator.html';">
+onclick="trackCalculator();">
 
 <h2>🧮 PACU藥物換算中心</h2>
 
@@ -346,18 +346,16 @@ MOD-02 ～ MOD-04
 <div class="module-grid">
 
 <div class="small-card"
-onclick="window.location.href='deathrace.html';">
+onclick="trackGame();">
 
 <h2>💊 PACU藥命關頭</h2>
 
 <p>
 情境式藥物學習遊戲
 </p>
-
 </div>
-
 <div class="small-card"
-onclick="window.location.href='toolbox.html';">
+onclick="trackDrugToolbox();">
 
 <h2>🧰 PACU藥物工具箱</h2>
 
@@ -375,10 +373,6 @@ onclick="window.location.href='app.html';">
 <p>
 手機版藥物查詢系統
 </p>
-
-</div>
-
-</div>
 
 </div>
 
@@ -412,7 +406,33 @@ function trackPart2(){
 
 }
 
+function trackCalculator(){
+
+    gtag('event','dose_calculation');
+
+    window.location.href='calculator.html';
+
+}
+
+function trackDrugToolbox(){
+
+    gtag('event','drug_search');
+
+    window.location.href='toolbox.html';
+
+}
+ function trackGame(){
+
+    gtag('event','game_start');
+
+    window.location.href='deathrace.html';
+
+}
+
+
 </script>
+
 </body>
 
 </html>
+
