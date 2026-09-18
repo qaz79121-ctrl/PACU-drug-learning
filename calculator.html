@@ -626,7 +626,33 @@ button:active{
 </head>
 
 <body>
+<!-- 返回學習平台 -->
+<div class="back-platform">
+    <button onclick="window.location.href='index.html'">
+        ← 返回PACU數位藥物學習中心
+    </button>
+</div>
+  .back-platform{
+    padding:10px 15px;
+    background:#f7fafc;
+    border-bottom:1px solid #d8e0e8;
+}
 
+.back-platform button{
+    width:auto;
+    padding:10px 16px;
+    background:#eef3f8;
+    border:1px solid #d8e0e8;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:bold;
+    color:#2f4050;
+    cursor:pointer;
+}
+
+.back-platform button:hover{
+    background:#e0f2fe;
+}
 <div class="header">
   藥物劑量換算系統
   <button class="admin-corner-btn" id="adminCornerBtn" onclick="switchTab('admin')">⚙ 後台管理</button>
