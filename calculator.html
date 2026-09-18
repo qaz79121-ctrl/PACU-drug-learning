@@ -1,11 +1,1616 @@
-<!-- 藥物換算中心 -->
-<div class="card"
-onclick="window.location.href='calculator.html';">
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>藥物劑量換算系統</title>
 
-<h2>🧮 PACU藥物換算中心</h2>
+<style>
+:root{
+  --ink:#1f2d3a;
+  --ink-soft:#52606d;
+  --line:#d8e0e8;
+  --brand:#1c84c6;
+  --brand-deep:#2f4050;
+  --bg-page-top:#eef3f8;
+  --bg-page-bottom:#f9fbfd;
+  --bg-card:#ffffff;
+  --bg-result:#e8f4ff;
+  --bg-warning:#fdecea;
+  --warning-ink:#b71c1c;
+  --bg-hint:#fff8e1;
+  --hint-border:#f0ad4e;
+  --bg-detail:#f6f8fb;
+  --detail-border:#e2e8f0;
+  --focus-ring:#1c84c6;
+}
 
-<p>
-PACU常用藥物劑量與抽取量換算
-</p>
+*{box-sizing:border-box;}
+
+html{
+  height:100%;
+}
+
+body{
+  font-family: "Microsoft JhengHei", "PingFang TC", Arial, sans-serif;
+  margin:0;
+  color:var(--ink);
+  background:linear-gradient(to bottom,var(--bg-page-top),var(--bg-page-bottom));
+  -webkit-font-smoothing:antialiased;
+  min-height:100%;
+}
+
+.header{
+  background:linear-gradient(90deg,var(--brand-deep),#3c556e);
+  color:white;
+  padding:12px 20px;
+  font-size:20px;
+  font-weight:bold;
+  letter-spacing:1px;
+  position:relative;
+}
+
+/* 後台管理按鈕:縮小至右上方 */
+.admin-corner-btn{
+  position:absolute;
+  top:50%;
+  right:16px;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.3);
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:bold;
+  border-radius:6px;
+  cursor:pointer;
+  letter-spacing:0.5px;
+  transition:background .15s ease;
+  width:auto;
+  margin:0;
+}
+.admin-corner-btn:hover{
+  background:rgba(255,255,255,0.25);
+  transform:translateY(-50%);
+  box-shadow:none;
+}
+.admin-corner-btn.active{
+  background:rgba(255,255,255,0.3);
+}
+
+.sub-header{
+  background:#f0f4f8;
+  padding:6px 20px;
+  font-size:13px;
+  color:var(--ink-soft);
+  border-bottom:1px solid var(--line);
+}
+
+/* 置中的「藥物劑量換算」頁籤:與 .container 同寬 */
+.tabbar-center{
+  max-width:480px;
+  margin:10px auto 0;
+  padding:0;
+}
+.tab-btn-main{
+  display:block;
+  width:100%;
+  padding:10px 20px;
+  background:linear-gradient(90deg,var(--brand),#2596e6);
+  color:#fff;
+  font-weight:bold;
+  font-size:16px;
+  letter-spacing:0.5px;
+  border-radius:14px 14px 0 0;
+  border:none;
+  box-shadow:0 -2px 10px rgba(28,132,198,0.12);
+  cursor:default;
+  margin:0;
+  text-align:center;
+}
+
+.container{
+  max-width:480px;
+  margin:0 auto 10px;
+  background:var(--bg-card);
+  padding:16px 18px;
+  border-radius:0 0 14px 14px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:14px;
+  border-left:4px solid var(--brand);
+  padding-left:8px;
+}
+
+label{
+  display:block;
+  margin-top:10px;
+  margin-bottom:0;
+  font-weight:bold;
+  color:#333;
+  font-size:14px;
+}
+
+input,select{
+  width:100%;
+  padding:10px 10px;
+  font-size:15px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1.5px solid var(--line);
+  background:#fafcfe;
+  transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  color:var(--ink);
+}
+
+input:focus, select:focus{
+  border-color:var(--focus-ring);
+  outline:2px solid transparent;
+  box-shadow:0 0 0 3px rgba(28,132,198,0.18);
+  background:#fff;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline:3px solid rgba(28,132,198,0.45);
+  outline-offset:1px;
+}
+
+.dose-row{
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+}
+
+.dose-row input{margin-top:5px;}
+
+#doseUnit{
+  min-width:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:bold;
+  color:var(--brand);
+  margin-top:5px;
+  padding:0 6px;
+  background:#f0f7fd;
+  border-radius:8px;
+  border:1.5px solid #d7e9f6;
+}
+
+/* 計算按鈕 */
+.btn-calc{
+  width:100%;
+  margin-top:14px;
+  padding:13px;
+  background:linear-gradient(90deg,var(--brand),#2596e6);
+  color:white;
+  border:none;
+  font-size:17px;
+  font-weight:bold;
+  border-radius:10px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+
+.btn-calc:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-calc:active{
+  transform:translateY(0);
+  box-shadow:none;
+}
+
+/* ====== 結果區:使用 sr-only 隱藏而非 display:none,確保 aria-live 可播報 ====== */
+.sr-result-region{
+  /* 始終佔據佈局,但內容為空時不產生多餘空間 */
+}
+.sr-result-region:empty{
+  display:none;
+}
+
+.result{
+  margin-top:14px;
+  background:var(--bg-result);
+  padding:14px 14px;
+  font-size:20px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:bold;
+  color:#0b5394;
+  box-shadow: inset 0 0 0 1px #cfe5fb;
+  border-left:5px solid var(--brand);
+}
+
+.warning{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:8px;
+  background:var(--bg-warning);
+  color:var(--warning-ink);
+  font-weight:bold;
+  text-align:center;
+  border:1.5px solid #f5b8b1;
+}
+
+.hint{
+  margin-top:10px;
+  padding:14px 16px;
+  border-radius:10px;
+  border:3px solid #e6900c;
+  background:repeating-linear-gradient(
+    135deg,
+    #fff3cd,
+    #fff3cd 10px,
+    #ffe8a3 10px,
+    #ffe8a3 20px
+  );
+  line-height:1.7;
+  color:#7a4a00;
+  font-size:16px;
+  font-weight:bold;
+  box-shadow:0 0 0 3px rgba(230,144,12,0.18), 0 4px 12px rgba(0,0,0,0.12);
+  animation:hint-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes hint-pulse{
+  0%,100%{ box-shadow:0 0 0 3px rgba(230,144,12,0.18), 0 4px 12px rgba(0,0,0,0.12); }
+  50%{ box-shadow:0 0 0 6px rgba(230,144,12,0.32), 0 4px 16px rgba(0,0,0,0.16); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hint{
+    animation:none !important;
+  }
+}
+
+.footer{
+  margin-top:10px;
+  font-size:11px;
+  text-align:right;
+  color:#888;
+}
+
+option.ctrl{
+  background-color:#fdecea;
+  color:#c62828;
+  font-weight:bold;
+}
+optgroup{
+  font-style:normal;
+  font-weight:bold;
+  color:var(--ink-soft);
+  font-size:13px;
+  padding-top:4px;
+}
+
+.hidden{display:none;}
+
+.detail{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:var(--bg-detail);
+  border:1px solid var(--detail-border);
+  color:#334155;
+  line-height:1.6;
+  font-size:13px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+}
+.detail .title{
+  font-weight:bold;
+  color:#0b5394;
+  margin-bottom:6px;
+  font-size:14px;
+}
+.detail .mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:12px;
+  color:#475569;
+}
+
+.note{
+  margin-top:10px;
+  padding:8px 10px;
+  font-size:12px;
+  color:#3f4a55;
+  line-height:1.5;
+  background:#f4f7fa;
+  border-radius:8px;
+  border:1px solid var(--line);
+}
+
+.toggle-detail{
+  margin-top:8px !important;
+  padding:9px 10px !important;
+  font-size:13px !important;
+  font-weight:bold !important;
+  background:#f1f5f9 !important;
+  color:#334155 !important;
+  border:1.5px solid var(--line) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+.toggle-detail:hover{
+  background:#e0f2fe !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+.toggle-detail:active{
+  background:#cfeafe !important;
+}
+
+#dilutionBlock label{margin-top:10px;}
+#dilutionBlock select{margin-top:4px;}
+
+@media (max-width:480px){
+  .tabbar-center{
+    margin:8px 10px 0;
+  }
+  .tab-btn-main{
+    border-radius:12px 12px 0 0;
+    padding:8px 16px;
+    font-size:15px;
+  }
+  .container{
+    margin:0 10px 10px;
+    border-radius:0 0 12px 12px;
+    padding:14px 14px;
+  }
+  input,select{
+    padding:10px 10px;
+    font-size:15px;
+  }
+  .btn-calc{
+    padding:13px;
+  }
+  .header{
+    font-size:18px;
+    padding:10px 16px;
+  }
+  .admin-corner-btn{
+    font-size:11px;
+    padding:5px 10px;
+    right:12px;
+  }
+  .sub-header{
+    padding:5px 16px;
+    font-size:12px;
+  }
+  label{
+    margin-top:8px;
+    font-size:13px;
+  }
+  .result{
+    font-size:18px;
+    padding:12px 12px;
+    margin-top:10px;
+  }
+  .note{
+    font-size:11px;
+    padding:6px 8px;
+    margin-top:8px;
+  }
+  .footer{
+    margin-top:6px;
+    font-size:10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{
+    transition:none !important;
+  }
+  button:hover{
+    transform:none;
+  }
+}
+
+/* ============ 後台管理返回按鈕 ============ */
+.back-bar{
+  display:flex;
+  align-items:center;
+  padding:10px 20px;
+  background:#f7fafc;
+  border-bottom:1px solid var(--line);
+}
+.back-btn{
+  width:auto;
+  margin:0;
+  padding:8px 16px;
+  font-size:14px;
+  font-weight:bold;
+  background:#eef3f8;
+  color:var(--brand-deep);
+  border:1.5px solid var(--line);
+  border-radius:8px;
+  cursor:pointer;
+}
+.back-btn:hover{
+  background:#e0f2fe;
+  transform:none;
+  box-shadow:none;
+}
+
+/* ============ 後台鎖定畫面 ============ */
+.admin-lock-screen{
+  max-width:420px;
+  margin:60px auto;
+  background:var(--bg-card);
+  padding:34px 26px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  text-align:center;
+}
+.lock-icon{font-size:44px;margin-bottom:10px;}
+.lock-title{font-size:17px;font-weight:bold;margin-bottom:18px;color:var(--brand-deep);}
+.lock-box input{
+  width:100%;
+  padding:14px;
+  font-size:18px;
+  border-radius:8px;
+  border:1.5px solid var(--line);
+  margin-top:0;
+  margin-bottom:14px;
+  text-align:center;
+  letter-spacing:6px;
+}
+.lock-box button{margin-top:0;}
+.lock-error{
+  margin-top:12px;
+  color:var(--warning-ink);
+  font-weight:bold;
+  font-size:14px;
+}
+
+/* ============ 後台管理面板 ============ */
+.admin-panel{max-width:640px;margin:20px auto;padding:0 20px 40px;}
+.admin-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:20px 0 18px;
+}
+.admin-toolbar button{
+  flex:1 1 calc(50% - 5px);
+  min-width:130px;
+  margin-top:0;
+  padding:13px 10px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  font-size:14px;
+  cursor:pointer;
+  background:#eef3f8;
+  color:var(--brand-deep);
+}
+.admin-toolbar button.btn-add{
+  background:linear-gradient(90deg,var(--brand),#2596e6);
+  color:#fff;
+  flex-basis:100%;
+}
+.admin-toolbar button.lock-btn{
+  background:var(--bg-warning);
+  color:var(--warning-ink);
+  flex-basis:100%;
+}
+.admin-toolbar button:hover{filter:brightness(0.96);}
+
+.drug-list{display:flex;flex-direction:column;gap:10px;}
+.drug-item{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+}
+.drug-item.ctrl-item{border-left:4px solid var(--warning-ink);}
+.drug-info{font-size:14px;color:var(--ink);line-height:1.5;}
+.drug-info .name{font-weight:bold;}
+.drug-info .meta{font-size:12px;color:var(--ink-soft);}
+.drug-actions{display:flex;gap:6px;flex-shrink:0;}
+.drug-actions button{
+  margin-top:0;
+  width:auto;
+  padding:9px 11px;
+  font-size:13px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.btn-edit{background:#e0f2fe;color:#0b5394;}
+.btn-delete{background:#fdecea;color:#b71c1c;}
+
+.empty-hint{text-align:center;color:var(--ink-soft);padding:30px 0;font-size:14px;}
+
+/* ============ 彈窗 ============ */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,25,35,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  z-index:50;
+}
+.modal-overlay.hidden{display:none;}
+.modal-box{
+  background:#fff;
+  border-radius:14px;
+  padding:22px;
+  max-width:480px;
+  width:100%;
+  max-height:88vh;
+  overflow-y:auto;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.modal-title{font-size:18px;font-weight:bold;margin-bottom:14px;color:var(--brand-deep);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;}
+.form-grid .full{grid-column:1/-1;}
+.form-grid label{margin-top:12px;font-size:13px;}
+.form-grid input,.form-grid select{margin-top:4px;padding:10px;font-size:14px;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-top:16px;}
+.checkbox-row input{width:auto;margin:0;}
+.checkbox-row label{margin:0;font-size:14px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.modal-actions button{flex:1;margin-top:0;padding:13px;font-size:15px;}
+.modal-actions .btn-secondary{background:#eef1f4;color:#333;}
+.confirm-text{font-size:15px;line-height:1.7;color:var(--ink);}
+
+/* ============ 新增:輔助樣式 ============ */
+.visually-hidden{
+  position:absolute !important;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.storage-note{
+  margin:16px 0 4px;
+  padding:12px 14px;
+  font-size:13px;
+  line-height:1.6;
+  color:#7a5400;
+  background:var(--bg-hint);
+  border:1.5px dashed var(--hint-border);
+  border-radius:8px;
+}
+.import-error-box{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:8px;
+  background:var(--bg-warning);
+  color:var(--warning-ink);
+  font-size:13.5px;
+  line-height:1.6;
+  border:1.5px solid #f5b8b1;
+}
+.import-error-box ul{margin:6px 0 0;padding-left:20px;}
+.admin-toolbar button.btn-restore{
+  background:#eef3f8;
+  color:var(--brand-deep);
+  flex-basis:100%;
+}
+
+/* ====== 後台按鈕通用 (避免繼承 .btn-calc 樣式) ====== */
+button{
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+button:active{
+  transform:translateY(0);
+  box-shadow:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  藥物劑量換算系統
+  <button class="admin-corner-btn" id="adminCornerBtn" onclick="switchTab('admin')">⚙ 後台管理</button>
+</div>
+<div class="sub-header">中國附醫｜ 恢復室 PACU</div>
+
+<!-- ============ 計算頁 ============ -->
+<div id="calcView" class="view">
+
+<div class="tabbar-center">
+  <div class="tab-btn-main">💊 藥物劑量換算</div>
+</div>
+
+<div class="container">
+
+<label for="drugSelect">選擇藥物</label>
+<select id="drugSelect" onchange="resetForm()">
+<option value="">-- 請選擇藥物 --</option>
+</select>
+
+<label for="dose">醫囑劑量</label>
+<div class="dose-row">
+  <input id="dose" type="number" step="0.1" inputmode="decimal">
+  <span id="doseUnit"></span>
+</div>
+
+<div id="dilutionBlock" class="hidden">
+  <label for="dilution">稀釋方式</label>
+  <select id="dilution" onchange="calculate(true)">
+    <option value="10">NS 稀釋至 10 mL</option>
+    <option value="5">NS 稀釋至 5 mL</option>
+  </select>
+</div>
+
+<button class="btn-calc" onclick="calculate()">計算</button>
+
+<!-- aria-live 容器:內容由 JS 動態填入,不使用 display:none 隱藏 -->
+<div id="resultLive" aria-live="assertive" aria-atomic="true" class="sr-result-region"></div>
+
+<button id="toggleDetailBtn" type="button" class="toggle-detail hidden" onclick="toggleDetail()">
+  📦 顯示藥物總量明細 ▼
+</button>
+
+<div id="detail" class="detail hidden"></div>
+
+<div class="note">
+  ⚑ 本工具僅提供<strong>數學換算</strong>(濃度/體積/包裝容量),實際給藥與稀釋方式請依醫囑與科內規範確認。
+</div>
+
+<div class="footer">
+v1.7 ｜ 2026-07-17 ｜ 中國附醫 PACU
+</div>
 
 </div>
+</div>
+
+<!-- ============ 後台管理頁 ============ -->
+<div id="adminView" class="view hidden">
+
+  <div class="back-bar">
+    <button class="back-btn" onclick="switchTab('calc')">← 返回藥物換算</button>
+  </div>
+
+  <!-- 鎖定畫面 -->
+  <div id="adminLocked" class="admin-lock-screen">
+    <div class="lock-box">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">請輸入後台維護密碼</div>
+      <label for="adminPasswordInput" class="visually-hidden">後台維護密碼</label>
+      <input id="adminPasswordInput" type="password" inputmode="numeric" placeholder="密碼" onkeydown="if(event.key==='Enter') tryUnlock()">
+      <button onclick="tryUnlock()">解鎖進入</button>
+      <div id="lockError" class="lock-error hidden" role="alert">❌ 密碼錯誤,請再試一次</div>
+    </div>
+  </div>
+
+  <!-- 後台面板 -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <div class="section-title">⚙ 後台管理</div>
+
+    <div class="storage-note">
+      💾 提醒:藥物資料儲存在「此瀏覽器 / 此裝置」本機,並不會自動同步到其他電腦或平板。若有多台裝置在使用,請在此裝置按「📥 備份 JSON」後,到其他裝置以「📤 匯入備份」同步;清除瀏覽器資料或更換裝置會導致設定遺失,建議定期備份保存。
+    </div>
+
+    <div class="admin-toolbar">
+      <button class="btn-add" onclick="openDrugForm()">＋ 新增藥物</button>
+      <button onclick="doBackup()">📥 備份 JSON</button>
+      <button onclick="triggerImport()">📤 匯入備份</button>
+      <input type="file" id="importFile" accept="application/json" class="hidden" onchange="doImport(event)">
+      <button onclick="doResetDefault()">↺ 重置預設</button>
+      <button class="btn-restore" onclick="doRestoreBackup()">↩ 復原上一次自動備份</button>
+      <button class="lock-btn" onclick="lockAdmin()">🔒 鎖定後台</button>
+    </div>
+
+    <div id="drugList" class="drug-list"></div>
+  </div>
+</div>
+
+<!-- ============ 新增 / 編輯藥物表單彈窗 ============ -->
+<div id="drugFormModal" class="modal-overlay hidden">
+  <div class="modal-box" id="drugFormModalBox" role="dialog" aria-modal="true" aria-labelledby="formTitle" tabindex="-1">
+    <div class="modal-title" id="formTitle">新增藥物</div>
+
+    <label for="drugFormLabel">藥品顯示文字(下拉選單顯示的完整名稱)</label>
+    <input id="drugFormLabel" type="text" placeholder="例:Fentanyl (100 mcg / 2 mL / amp)">
+
+    <div class="form-grid">
+      <div>
+        <label for="drugFormType">計算類型</label>
+        <select id="drugFormType">
+          <option value="mg">mg(依濃度 mg/mL 換算）</option>
+          <option value="mcg">mcg（依濃度 mcg/mL 換算）</option>
+          <option value="IU">IU（依濃度 IU/mL 換算）</option>
+          <option value="amp">amp（依每支 mL 數換算）</option>
+          <option value="bot">bot（依每瓶 mL 數換算）</option>
+          <option value="tab">tab（依每顆含量換算）</option>
+        </select>
+      </div>
+      <div>
+        <label for="drugFormSpecial">低劑量提示分類</label>
+        <select id="drugFormSpecial">
+          <option value="">無</option>
+          <option value="fentanyl">fentanyl</option>
+          <option value="meperidine">meperidine</option>
+          <option value="morphine">morphine</option>
+          <option value="norepinephrine">norepinephrine</option>
+          <option value="propofol">propofol</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="drugFormStrength">濃度 / 每顆含量 (strength)</label>
+        <input id="drugFormStrength" type="number" step="any">
+      </div>
+      <div>
+        <label for="drugFormAmountunit">含量單位 (amountunit)</label>
+        <input id="drugFormAmountunit" type="text" placeholder="mg / mcg / IU / g">
+      </div>
+
+      <div>
+        <label for="drugFormAmpml">每支 mL 數 (ampml)</label>
+        <input id="drugFormAmpml" type="number" step="any">
+      </div>
+      <div>
+        <label for="drugFormBotml">每瓶 mL 數 (botml)</label>
+        <input id="drugFormBotml" type="number" step="any">
+      </div>
+
+      <div>
+        <label for="drugFormTotalml">包裝總 mL (totalml)</label>
+        <input id="drugFormTotalml" type="number" step="any">
+      </div>
+      <div>
+        <label for="drugFormTotalamount">包裝總含量 (totalamount)</label>
+        <input id="drugFormTotalamount" type="number" step="any">
+      </div>
+
+      <div>
+        <label for="drugFormPackcount">每瓶顆數 (packcount, 限 tab)</label>
+        <input id="drugFormPackcount" type="number" step="1">
+      </div>
+      <div></div>
+
+      <div>
+        <label for="drugFormBase">低劑量基準 (base)</label>
+        <input id="drugFormBase" type="number" step="any">
+      </div>
+      <div>
+        <label for="drugFormLowth">低劑量觸發門檻 (lowth)</label>
+        <input id="drugFormLowth" type="number" step="any">
+      </div>
+    </div>
+
+    <div class="checkbox-row">
+      <input id="drugFormCtrl" type="checkbox">
+      <label for="drugFormCtrl">標示為管制藥（⚠ 紅色樣式）</label>
+    </div>
+
+    <div id="drugFormError" class="import-error-box hidden" role="alert"></div>
+
+    <div class="modal-actions">
+      <button onclick="saveDrugForm()">儲存</button>
+      <button class="btn-secondary" onclick="closeDrugForm()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 通用確認彈窗 ============ -->
+<div id="confirmModal" class="modal-overlay hidden">
+  <div class="modal-box" id="confirmModalBox" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle" tabindex="-1">
+    <div class="modal-title" id="confirmModalTitle">請確認</div>
+    <div id="confirmText" class="confirm-text"></div>
+    <div class="modal-actions">
+      <button id="confirmYesBtn" onclick="confirmYes()">確定</button>
+      <button class="btn-secondary" onclick="confirmNo()">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   資料層
+   ========================================================= */
+const STORAGE_KEY = 'pacu_dose_calc_drugs_v1';
+const BACKUP_KEY = 'pacu_dose_calc_drugs_autobackup_v1';
+const ADMIN_PASSWORD = '8888';
+const ALLOWED_TYPES = ['mg','mcg','IU','amp','bot','tab'];
+
+const DEFAULT_DRUGS = [
+  { id:'fentanyl', label:'⚠ (管) Fentanyl (100 mcg / 2 mL / amp)', type:'mcg', ctrl:true, special:'fentanyl', strength:50, base:5, lowth:5, totalml:2, totalamount:100, amountunit:'mcg' },
+  { id:'meperidine', label:'⚠ (管) Meperidine (50 mg / 1 mL / amp)', type:'mg', ctrl:true, special:'meperidine', strength:50, base:5, lowth:5, totalml:1, totalamount:50, amountunit:'mg' },
+  { id:'morphine', label:'⚠ (管) Morphine (10 mg / 1 mL / amp)', type:'mg', ctrl:true, special:'morphine', strength:10, base:1, lowth:5, totalml:1, totalamount:10, amountunit:'mg' },
+  { id:'propofol', label:'⚠ (管) Propofol (200 mg / 20 mL / amp)', type:'mg', ctrl:true, special:'propofol', strength:10, base:1, lowth:5, totalml:20, totalamount:200, amountunit:'mg' },
+  { id:'midazolam', label:'⚠ (管) Midatin (15 mg / 3 mL / amp)', type:'mg', ctrl:true, strength:5, totalml:3, totalamount:15, amountunit:'mg' },
+  { id:'norepinephrine', label:'Norepinephrine (4 mg / 4 mL / amp)', type:'mcg', special:'norepinephrine', strength:1000, base:100, lowth:200, totalml:4, totalamount:4000, amountunit:'mcg' },
+  { id:'atropine', label:'Atropine (1 mg / 1 mL / amp)', type:'mg', strength:1, totalml:1, totalamount:1, amountunit:'mg' },
+  { id:'calcium_gluconate', label:'Calcium gluconate (1 g / 10 mL / amp)', type:'amp', ampml:10, totalml:10, totalamount:1, amountunit:'g' },
+  { id:'dexamethasone', label:'Dexamethasone (5 mg / 1 mL / amp)', type:'mg', strength:5, totalml:1, totalamount:5, amountunit:'mg' },
+  { id:'diphenhydramine', label:'Diphenhydramine (30 mg / 1 mL / amp)', type:'mg', strength:30, totalml:1, totalamount:30, amountunit:'mg' },
+  { id:'dopamine', label:'Dopamine (200 mg / 5 mL / Amp)', type:'mg', strength:40, totalml:5, totalamount:200, amountunit:'mg' },
+  { id:'droperidol', label:'Droperidol (5 mg / 2 mL / amp)', type:'mg', strength:2.5, totalml:2, totalamount:5, amountunit:'mg' },
+  { id:'epinephrine', label:'Epinephrine (1 mg / 1 mL / amp)', type:'mg', strength:1, totalml:1, totalamount:1, amountunit:'mg' },
+  { id:'ephedrine', label:'Ephedrine (40 mg / 1 mL / amp)', type:'mg', strength:40, totalml:1, totalamount:40, amountunit:'mg' },
+  { id:'furosemide', label:'Furosemide (20 mg / 2 mL / amp)', type:'mg', strength:10, totalml:2, totalamount:20, amountunit:'mg' },
+  { id:'glucose50', label:'Glucose 50% (20 mL / amp)', type:'amp', ampml:20, totalml:20 },
+  { id:'heparin', label:'Heparin (25,000 IU / 5 mL)', type:'IU', strength:5000, totalml:5, totalamount:25000, amountunit:'IU' },
+  { id:'ketorolac', label:'Ketorolac (30 mg / 1 mL)', type:'mg', strength:30, totalml:1, totalamount:30, amountunit:'mg' },
+  { id:'labetalol', label:'Labetalol (25 mg / 5 mL / Amp)', type:'mg', strength:5, totalml:5, totalamount:25, amountunit:'mg' },
+  { id:'lidocaine', label:'Lidocaine (100 mg / 5 mL / Amp)', type:'mg', strength:20, totalml:5, totalamount:100, amountunit:'mg' },
+  { id:'magnesium_sulfate', label:'Magnesium sulfate (20 mL / amp)', type:'amp', ampml:20, totalml:20 },
+  { id:'mannitol', label:'Mannitol (100 mL / bot)', type:'bot', botml:100, totalml:100 },
+  { id:'metoclopramide', label:'Metoclopramide (10 mg / 2 mL)', type:'mg', strength:5, totalml:2, totalamount:10, amountunit:'mg' },
+  { id:'nalbuphine', label:'Nalbuphine (10 mg / 1 mL)', type:'mg', strength:10, totalml:1, totalamount:10, amountunit:'mg' },
+  { id:'neostigmine', label:'Neostigmine (0.5 mg / 1 mL)', type:'mg', strength:0.5, totalml:1, totalamount:0.5, amountunit:'mg' },
+  { id:'nicardipine', label:'Nicardipine (10 mg / 10 mL / Amp)', type:'mg', strength:1, totalml:10, totalamount:10, amountunit:'mg' },
+  { id:'nitroglycerin', label:'Nitroglycerin (0.6 mg / tab , 25 tab / bot)', type:'tab', strength:0.6, totalamount:0.6, amountunit:'mg', packcount:25 },
+  { id:'prochlorperazine', label:'Prochlorperazine (5 mg / 1 mL / Amp)', type:'mg', strength:5, totalml:1, totalamount:5, amountunit:'mg' },
+  { id:'salbutamol', label:'Salbutamol (5 mg / 2.5 mL / Amp)', type:'mg', strength:2, totalml:2.5, totalamount:5, amountunit:'mg' },
+  { id:'sodium_bicarbonate', label:'Sodium Bicarbonate 7% (20 mL / Amp)', type:'amp', ampml:20, totalml:20 },
+  { id:'hydroxyethyl_starch', label:'Hydroxyethyl starch (500 mL / bot)', type:'bot', botml:500, totalml:500 }
+];
+
+function cloneDefaults(){
+  return JSON.parse(JSON.stringify(DEFAULT_DRUGS));
+}
+
+function loadDrugs(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length){
+        return parsed;
+      }
+    }
+  }catch(e){
+    console.warn('讀取本機資料失敗,改用預設資料', e);
+  }
+  return cloneDefaults();
+}
+
+function saveDrugs(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(drugs));
+  }catch(e){
+    alert('⚠ 儲存失敗（瀏覽器儲存空間可能已滿或無法使用）:' + e.message);
+  }
+}
+
+function autoBackupBeforeDestructive(){
+  try{
+    localStorage.setItem(BACKUP_KEY, JSON.stringify({
+      savedAt: new Date().toISOString(),
+      drugs: drugs
+    }));
+  }catch(e){
+    console.warn('自動備份失敗', e);
+  }
+}
+
+function doRestoreBackup(){
+  let raw;
+  try{
+    raw = localStorage.getItem(BACKUP_KEY);
+  }catch(e){
+    raw = null;
+  }
+  if(!raw){
+    alert('目前沒有可復原的自動備份紀錄。（僅在執行「刪除」或「重置預設」前會自動建立備份）');
+    return;
+  }
+  let parsed;
+  try{
+    parsed = JSON.parse(raw);
+  }catch(e){
+    alert('❌ 自動備份資料損毀,無法復原。');
+    return;
+  }
+  const savedAt = parsed.savedAt ? new Date(parsed.savedAt).toLocaleString('zh-TW') : '未知時間';
+  showConfirm('確定要復原「' + savedAt + '」的自動備份嗎?目前的藥物清單將被取代。', function(){
+    drugs = parsed.drugs || [];
+    saveDrugs();
+    renderDrugSelect();
+    renderAdminList();
+  });
+}
+
+let drugs = loadDrugs();
+
+/* =========================================================
+   計算頁
+   ========================================================= */
+let detailOpen = false;
+
+function renderDrugSelect(){
+  drugSelect.innerHTML = '<option value="">-- 請選擇藥物 --</option>';
+
+  var sorted = drugs.slice().sort(function(a, b){
+    if(a.ctrl && !b.ctrl) return -1;
+    if(!a.ctrl && b.ctrl) return 1;
+    return a.label.localeCompare(b.label, 'en', { sensitivity:'base' });
+  });
+
+  var ctrlDrugs = sorted.filter(function(d){ return !!d.ctrl; });
+  var nonCtrlDrugs = sorted.filter(function(d){ return !d.ctrl; });
+
+  function buildOption(d){
+    var opt = document.createElement('option');
+    opt.textContent = d.label;
+    opt.value = d.id;
+    if(d.ctrl) opt.className = 'ctrl';
+    if(d.type) opt.dataset.type = d.type;
+    if(d.special) opt.dataset.special = d.special;
+    if(d.strength !== undefined && d.strength !== null && d.strength !== '') opt.dataset.strength = d.strength;
+    if(d.ampml !== undefined && d.ampml !== null && d.ampml !== '') opt.dataset.ampml = d.ampml;
+    if(d.botml !== undefined && d.botml !== null && d.botml !== '') opt.dataset.botml = d.botml;
+    if(d.totalml !== undefined && d.totalml !== null && d.totalml !== '') opt.dataset.totalml = d.totalml;
+    if(d.totalamount !== undefined && d.totalamount !== null && d.totalamount !== '') opt.dataset.totalamount = d.totalamount;
+    if(d.amountunit) opt.dataset.amountunit = d.amountunit;
+    if(d.packcount !== undefined && d.packcount !== null && d.packcount !== '') opt.dataset.packcount = d.packcount;
+    if(d.base !== undefined && d.base !== null && d.base !== '') opt.dataset.base = d.base;
+    if(d.lowth !== undefined && d.lowth !== null && d.lowth !== '') opt.dataset.lowth = d.lowth;
+    return opt;
+  }
+
+  if(ctrlDrugs.length){
+    var grpCtrl = document.createElement('optgroup');
+    grpCtrl.label = '── 管制藥品 ──';
+    ctrlDrugs.forEach(function(d){ grpCtrl.appendChild(buildOption(d)); });
+    drugSelect.appendChild(grpCtrl);
+  }
+
+  if(nonCtrlDrugs.length){
+    var grpGen = document.createElement('optgroup');
+    grpGen.label = '── 一般藥品 (A-Z) ──';
+    nonCtrlDrugs.forEach(function(d){ grpGen.appendChild(buildOption(d)); });
+    drugSelect.appendChild(grpGen);
+  }
+
+  resetForm();
+}
+
+function toggleDetail(){
+  const opt = drugSelect.selectedOptions[0];
+  if(!opt || !opt.dataset || !opt.dataset.type) return;
+
+  detailOpen = !detailOpen;
+
+  if(detailOpen){
+    showDrugDetail(opt);
+    detail.classList.remove('hidden');
+    toggleDetailBtn.innerHTML = '📦 收合藥物總量明細 ▲';
+  }else{
+    detail.classList.add('hidden');
+    toggleDetailBtn.innerHTML = '📦 顯示藥物總量明細 ▼';
+  }
+}
+
+function resetForm(){
+  const opt = drugSelect.selectedOptions[0];
+  const map = { mg:'mg', mcg:'mcg', IU:'IU', amp:'Amp', bot:'bot', tab:'mg' };
+
+  if(!opt || !opt.dataset || !opt.dataset.type){
+    doseUnit.textContent = '';
+    detail.classList.add('hidden');
+    detail.innerHTML = '';
+    toggleDetailBtn.classList.add('hidden');
+    toggleDetailBtn.innerHTML = '📦 顯示藥物總量明細 ▼';
+    detailOpen = false;
+  }else{
+    doseUnit.textContent = map[opt.dataset.type] || '';
+    showDrugDetail(opt);
+
+    toggleDetailBtn.classList.remove('hidden');
+
+    if(detailOpen){
+      detail.classList.remove('hidden');
+      toggleDetailBtn.innerHTML = '📦 收合藥物總量明細 ▲';
+    }else{
+      detail.classList.add('hidden');
+      toggleDetailBtn.innerHTML = '📦 顯示藥物總量明細 ▼';
+    }
+  }
+
+  dose.value='';
+  resultLive.innerHTML = '';
+  dilutionBlock.classList.add('hidden');
+}
+
+function showDrugDetail(opt){
+  const type = opt.dataset.type;
+
+  const unitMap = { mg:'mg', mcg:'mcg', IU:'IU', amp:'Amp', bot:'bot', tab:'tab' };
+  const unit = unitMap[type] || '';
+  const strength = parseFloat(opt.dataset.strength || '');
+  const ampml = parseFloat(opt.dataset.ampml || '');
+  const botml = parseFloat(opt.dataset.botml || '');
+
+  const totalml = parseFloat(opt.dataset.totalml || '');
+  const totalamount = parseFloat(opt.dataset.totalamount || '');
+  const amountunit = opt.dataset.amountunit || (type==='tab' ? 'mg' : (unitMap[type]||''));
+
+  const base = parseFloat(opt.dataset.base || '');
+  const lowth = parseFloat(opt.dataset.lowth || '5');
+
+  let lines = [];
+  lines.push('<div class="title">📦 藥物總容量明細</div>');
+  lines.push('<div><strong>品項:</strong>' + opt.textContent.trim() + '</div>');
+
+  if(type==='mg' || type==='mcg' || type==='IU'){
+    if(!Number.isNaN(strength)){
+      lines.push('<div><strong>濃度:</strong>' + strength + ' ' + unit + '/mL</div>');
+    }
+    if(!Number.isNaN(totalml) && !Number.isNaN(totalamount)){
+      let dispAmt = totalamount;
+      let dispUnit = amountunit;
+      if(amountunit === 'mcg' && totalamount >= 1000){
+        dispAmt = totalamount / 1000;
+        dispUnit = 'mg';
+      }
+      lines.push('<div><strong>包裝總量:</strong>' + dispAmt + ' ' + dispUnit + ' / ' + totalml + ' mL</div>');
+    }else if(!Number.isNaN(totalml)){
+      lines.push('<div><strong>包裝總量:</strong>' + totalml + ' mL</div>');
+    }
+  }
+
+  if(type==='amp'){
+    if(!Number.isNaN(ampml)){
+      lines.push('<div><strong>1 Amp =</strong> ' + ampml + ' mL</div>');
+    }
+    if(!Number.isNaN(totalamount) && amountunit){
+      lines.push('<div><strong>每支含量:</strong>' + totalamount + ' ' + amountunit + ' / Amp</div>');
+    }
+  }
+
+  if(type==='bot'){
+    if(!Number.isNaN(botml)){
+      lines.push('<div><strong>1 bot =</strong> ' + botml + ' mL</div>');
+    }
+  }
+
+  if(type==='tab'){
+    if(!Number.isNaN(strength)){
+      lines.push('<div><strong>每顆含量:</strong>' + strength + ' mg / tab</div>');
+    }
+
+    const pack = parseFloat(opt.dataset.packcount || '');
+    if(!Number.isNaN(pack) && !Number.isNaN(strength)){
+      const totalMg = pack * strength;
+      lines.push('<div><strong>每瓶總量:</strong>' + pack + ' tab / bot（' + totalMg.toFixed(1) + ' mg）</div>');
+    }else{
+      lines.push('<div class="mono">（註:若需「每瓶/每盒幾顆」與總量,請在後台補上每瓶顆數(packcount)參數即可自動計算。）</div>');
+    }
+  }
+
+  if(!Number.isNaN(base)){
+    let dispBase = base;
+    let u = (type === 'mcg') ? 'mcg' : 'mg';
+    if(type === 'mcg' && base >= 100){
+      dispBase = base / 1000;
+      u = 'mg';
+    }
+    lines.push('<div><strong>低劑量稀釋基準:</strong>' + dispBase + ' ' + u + ' / 0.1 mL（低於 ' + lowth + ' 觸發提示）</div>');
+  }
+
+  detail.innerHTML = lines.join('');
+  if(detailOpen){
+    detail.classList.remove('hidden');
+  }else{
+    detail.classList.add('hidden');
+  }
+}
+
+/* =========================================================
+   螢幕閱讀器播報:先清空 live region,短暫延遲後填入新內容
+   確保 aria-live="assertive" 能正確觸發播報
+   ========================================================= */
+function announceResults(resultHtml, warningHtml, hintHtml){
+  /* 第一步:清空,讓 AT 偵測到「內容變更」 */
+  resultLive.innerHTML = '';
+
+  /* 第二步:短延遲後寫入完整內容 */
+  setTimeout(function(){
+    var parts = [];
+    if(resultHtml){
+      parts.push('<div class="result">' + resultHtml + '</div>');
+    }
+    if(warningHtml){
+      parts.push('<div class="warning">' + warningHtml + '</div>');
+    }
+    if(hintHtml){
+      parts.push('<div class="hint">' + hintHtml + '</div>');
+    }
+    resultLive.innerHTML = parts.join('');
+  }, 80);
+}
+
+function calculate(silent){
+  if(silent === undefined) silent = false;
+  const opt = drugSelect.selectedOptions[0];
+  if(!opt || !opt.dataset || !opt.dataset.type){
+    if(!silent) alert('請先選藥');
+    return;
+  }
+
+  const doseVal = parseFloat(dose.value);
+  if(!doseVal || doseVal<=0){
+    if(!silent) alert('請輸入正確劑量');
+    return;
+  }
+
+  const type = opt.dataset.type;
+  const special = opt.dataset.special;
+
+  let ml = null;
+  let text = '';
+
+  const strength = parseFloat(opt.dataset.strength || '0');
+  const ampml = parseFloat(opt.dataset.ampml || '0');
+  const botml = parseFloat(opt.dataset.botml || '0');
+
+  if(type==='mg' || type==='mcg' || type==='IU'){
+    ml = doseVal / strength;
+    text = '👉 抽取 ' + ml.toFixed(2) + ' mL';
+
+  }else if(type==='amp'){
+    ml = doseVal * ampml;
+    text = '👉 抽取 ' + ml.toFixed(1) + ' mL';
+
+  }else if(type==='bot'){
+    ml = doseVal * botml;
+    text = '👉 抽取 ' + ml.toFixed(1) + ' mL';
+
+  }else if(type==='tab'){
+    const tab = doseVal / strength;
+    text = '👉 給 ' + tab.toFixed(1) + ' 顆 (' + doseVal + ' mg)';
+  }
+
+  /* 組裝警示文字 */
+  var warningText = '';
+  if(ml !== null && ml <= 0.1){
+    warningText = '⚠ ≤0.1 mL 建議稀釋使用';
+  }else if(ml !== null && ml < 1){
+    warningText = '⚠ 抽取量 <1 mL 請注意';
+  }
+
+  /* 組裝低劑量提示 */
+  var hintText = '';
+  const lowList = ['fentanyl','meperidine','morphine','propofol','norepinephrine'];
+  const lowth = parseFloat(opt.dataset.lowth || '5');
+
+  if(lowList.includes(special) && doseVal < lowth){
+    dilutionBlock.classList.remove('hidden');
+
+    const finalVol = parseFloat(dilution.value);
+    const base = parseFloat(opt.dataset.base || '5');
+    const push = (doseVal * finalVol) / base;
+
+    let hintBase = base;
+    let hintUnit = (type === 'mcg') ? 'mcg' : 'mg';
+    if(type === 'mcg' && base >= 100){
+      hintBase = base / 1000;
+      hintUnit = 'mg';
+    }
+
+    hintText =
+      '💡 低劑量建議<br>' +
+      '抽 ' + hintBase + ' ' + hintUnit + '/0.1mL → 稀釋 ' + finalVol + 'mL → 推 ' + push.toFixed(1) + 'mL';
+  }else{
+    dilutionBlock.classList.add('hidden');
+  }
+
+  /* 透過 announceResults 統一寫入 live region,確保螢幕閱讀器播報 */
+  announceResults(text, warningText, hintText);
+
+  showDrugDetail(opt);
+}
+
+/* =========================================================
+   分頁切換 + 後台密碼鎖定
+   ========================================================= */
+let adminAuthenticated = false;
+
+function switchTab(tab){
+  if(tab === 'calc'){
+    calcView.classList.remove('hidden');
+    adminView.classList.add('hidden');
+    adminCornerBtn.classList.remove('active');
+  }else{
+    calcView.classList.add('hidden');
+    adminView.classList.remove('hidden');
+    adminCornerBtn.classList.add('active');
+
+    if(adminAuthenticated){
+      adminLocked.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      renderAdminList();
+    }else{
+      adminLocked.classList.remove('hidden');
+      adminPanel.classList.add('hidden');
+      adminPasswordInput.value = '';
+      lockError.classList.add('hidden');
+      setTimeout(function(){ adminPasswordInput.focus(); }, 50);
+    }
+  }
+}
+
+function tryUnlock(){
+  if(adminPasswordInput.value === ADMIN_PASSWORD){
+    adminAuthenticated = true;
+    adminPasswordInput.value = '';
+    lockError.classList.add('hidden');
+    adminLocked.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+    renderAdminList();
+  }else{
+    lockError.classList.remove('hidden');
+    adminPasswordInput.value = '';
+    adminPasswordInput.focus();
+  }
+}
+
+function lockAdmin(){
+  adminAuthenticated = false;
+  switchTab('calc');
+}
+
+/* =========================================================
+   後台管理:列表渲染
+   ========================================================= */
+function renderAdminList(){
+  if(!drugs.length){
+    drugList.innerHTML = '<div class="empty-hint">目前沒有任何藥物資料,請點「＋ 新增藥物」或「📤 匯入備份」。</div>';
+    return;
+  }
+
+  const typeLabel = { mg:'mg 濃度換算', mcg:'mcg 濃度換算', IU:'IU 濃度換算', amp:'amp 每支換算', bot:'bot 每瓶換算', tab:'tab 每顆換算' };
+
+  drugList.innerHTML = drugs.map(function(d){
+    var metaParts = [ typeLabel[d.type] || d.type ];
+    if(d.ctrl) metaParts.push('⚠ 管制藥');
+    if(d.special) metaParts.push('低劑量提示:' + d.special);
+    return '<div class="drug-item ' + (d.ctrl ? 'ctrl-item':'') + '">' +
+      '<div class="drug-info">' +
+        '<div class="name">' + escapeHtml(d.label) + '</div>' +
+        '<div class="meta">' + metaParts.join(' ・ ') + '</div>' +
+      '</div>' +
+      '<div class="drug-actions">' +
+        '<button class="btn-edit" onclick="openDrugForm(\'' + d.id + '\')">✏ 編輯</button>' +
+        '<button class="btn-delete" onclick="deleteDrug(\'' + d.id + '\')">✕ 刪除</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(str){
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* =========================================================
+   彈窗共用:開關 + 無障礙(focus trap / Esc 關閉)
+   ========================================================= */
+let lastFocusedBeforeModal = null;
+
+function getFocusableEls(container){
+  return Array.prototype.slice.call(
+    container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+  ).filter(function(el){ return !el.disabled && el.offsetParent !== null; });
+}
+
+function openModalEl(overlayEl, boxEl, initialFocusEl){
+  lastFocusedBeforeModal = document.activeElement;
+  overlayEl.classList.remove('hidden');
+  setTimeout(function(){
+    (initialFocusEl || boxEl).focus();
+  }, 30);
+}
+
+function closeModalEl(overlayEl){
+  overlayEl.classList.add('hidden');
+  if(lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function'){
+    lastFocusedBeforeModal.focus();
+  }
+  lastFocusedBeforeModal = null;
+}
+
+function isModalOpen(overlayEl){
+  return overlayEl && !overlayEl.classList.contains('hidden');
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    if(isModalOpen(drugFormModal)){
+      closeDrugForm();
+    }else if(isModalOpen(confirmModal)){
+      confirmNo();
+    }
+    return;
+  }
+
+  if(e.key === 'Tab'){
+    var activeOverlay = isModalOpen(drugFormModal) ? drugFormModalBox
+      : (isModalOpen(confirmModal) ? confirmModalBox : null);
+    if(!activeOverlay) return;
+
+    var focusables = getFocusableEls(activeOverlay);
+    if(!focusables.length) return;
+
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+
+    if(e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    }else if(!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+
+/* =========================================================
+   後台管理:新增 / 編輯表單
+   ========================================================= */
+let editingId = null;
+
+function openDrugForm(id){
+  editingId = id || null;
+  const d = id ? drugs.find(function(x){ return x.id===id; }) : null;
+
+  formTitle.textContent = id ? '編輯藥物' : '新增藥物';
+
+  drugFormLabel.value = d ? d.label : '';
+  drugFormType.value = d ? d.type : 'mg';
+  drugFormCtrl.checked = d ? !!d.ctrl : false;
+  drugFormSpecial.value = (d && d.special) ? d.special : '';
+  drugFormStrength.value = (d && d.strength != null) ? d.strength : '';
+  drugFormAmpml.value = (d && d.ampml != null) ? d.ampml : '';
+  drugFormBotml.value = (d && d.botml != null) ? d.botml : '';
+  drugFormTotalml.value = (d && d.totalml != null) ? d.totalml : '';
+  drugFormTotalamount.value = (d && d.totalamount != null) ? d.totalamount : '';
+  drugFormAmountunit.value = (d && d.amountunit) ? d.amountunit : '';
+  drugFormPackcount.value = (d && d.packcount != null) ? d.packcount : '';
+  drugFormBase.value = (d && d.base != null) ? d.base : '';
+  drugFormLowth.value = (d && d.lowth != null) ? d.lowth : '';
+
+  drugFormError.classList.add('hidden');
+  drugFormError.innerHTML = '';
+
+  openModalEl(drugFormModal, drugFormModalBox, drugFormLabel);
+}
+
+function closeDrugForm(){
+  closeModalEl(drugFormModal);
+  editingId = null;
+}
+
+function generateId(){
+  return 'drug_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function saveDrugForm(){
+  const label = drugFormLabel.value.trim();
+  if(!label){
+    alert('請輸入藥品顯示文字');
+    drugFormLabel.focus();
+    return;
+  }
+
+  const num = function(el){
+    var v = el.value.trim();
+    return v === '' ? undefined : parseFloat(v);
+  };
+  const str = function(el){
+    var v = el.value.trim();
+    return v === '' ? undefined : v;
+  };
+
+  const newDrug = {
+    id: editingId || generateId(),
+    label: label,
+    type: drugFormType.value,
+    ctrl: drugFormCtrl.checked,
+    special: str(drugFormSpecial),
+    strength: num(drugFormStrength),
+    ampml: num(drugFormAmpml),
+    botml: num(drugFormBotml),
+    totalml: num(drugFormTotalml),
+    totalamount: num(drugFormTotalamount),
+    amountunit: str(drugFormAmountunit),
+    packcount: num(drugFormPackcount),
+    base: num(drugFormBase),
+    lowth: num(drugFormLowth),
+  };
+
+  if(editingId){
+    const idx = drugs.findIndex(function(d){ return d.id === editingId; });
+    if(idx > -1) drugs[idx] = newDrug;
+  }else{
+    drugs.push(newDrug);
+  }
+
+  saveDrugs();
+  renderDrugSelect();
+  renderAdminList();
+  closeDrugForm();
+}
+
+/* =========================================================
+   後台管理:刪除 / 重置(執行前自動快照備份)
+   ========================================================= */
+let pendingConfirmAction = null;
+
+function showConfirm(text, action){
+  confirmText.textContent = text;
+  pendingConfirmAction = action;
+  openModalEl(confirmModal, confirmModalBox, confirmYesBtn);
+}
+
+function confirmYes(){
+  if(pendingConfirmAction) pendingConfirmAction();
+  closeModalEl(confirmModal);
+  pendingConfirmAction = null;
+}
+
+function confirmNo(){
+  closeModalEl(confirmModal);
+  pendingConfirmAction = null;
+}
+
+function deleteDrug(id){
+  const d = drugs.find(function(x){ return x.id === id; });
+  if(!d) return;
+  showConfirm('確定要刪除「' + d.label + '」嗎?此操作無法復原(系統會先自動保留一份操作前的備份,可於「↩ 復原上一次自動備份」還原)。', function(){
+    autoBackupBeforeDestructive();
+    drugs = drugs.filter(function(x){ return x.id !== id; });
+    saveDrugs();
+    renderDrugSelect();
+    renderAdminList();
+  });
+}
+
+function doResetDefault(){
+  showConfirm('確定要重置為原始預設藥物嗎?目前所有自訂新增/修改的資料將被覆蓋(系統會先自動保留一份操作前的備份,可於「↩ 復原上一次自動備份」還原)。', function(){
+    autoBackupBeforeDestructive();
+    drugs = cloneDefaults();
+    saveDrugs();
+    renderDrugSelect();
+    renderAdminList();
+  });
+}
+
+/* =========================================================
+   後台管理:備份 / 匯入
+   ========================================================= */
+function doBackup(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const filename = 'pacu_drugs_backup_' + y + m + d + '.json';
+
+  const blob = new Blob([JSON.stringify(drugs, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function triggerImport(){
+  importFile.click();
+}
+
+function validateDrugEntry(d, index){
+  var errors = [];
+  var prefix = '第 ' + (index + 1) + ' 筆';
+
+  if(!d || typeof d !== 'object'){
+    return [prefix + ':不是有效的物件'];
+  }
+  if(typeof d.label !== 'string' || !d.label.trim()){
+    errors.push(prefix + ':缺少 label（藥品顯示文字）');
+  }
+  if(typeof d.type !== 'string' || !ALLOWED_TYPES.includes(d.type)){
+    errors.push(prefix + '（' + (d.label || '未命名') + '）:type 必須是 ' + ALLOWED_TYPES.join('/') + ' 其中之一');
+    return errors;
+  }
+
+  var isNum = function(v){ return typeof v === 'number' && !Number.isNaN(v); };
+
+  if((d.type === 'mg' || d.type === 'mcg' || d.type === 'IU') && !isNum(d.strength)){
+    errors.push(prefix + '（' + d.label + '）:type=' + d.type + ' 需要數值型的 strength（濃度）');
+  }
+  if(d.type === 'amp' && !isNum(d.ampml)){
+    errors.push(prefix + '（' + d.label + '）:type=amp 需要數值型的 ampml（每支 mL 數）');
+  }
+  if(d.type === 'bot' && !isNum(d.botml)){
+    errors.push(prefix + '（' + d.label + '）:type=bot 需要數值型的 botml（每瓶 mL 數）');
+  }
+  if(d.type === 'tab' && !isNum(d.strength)){
+    errors.push(prefix + '（' + d.label + '）:type=tab 需要數值型的 strength（每顆含量）');
+  }
+
+  return errors;
+}
+
+function doImport(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(){
+    try{
+      const parsed = JSON.parse(reader.result);
+
+      if(!Array.isArray(parsed)){
+        alert('❌ 匯入失敗:JSON 內容必須是藥物「陣列」（例如 [ {...}, {...} ]）。');
+        event.target.value = '';
+        return;
+      }
+
+      var allErrors = [];
+      parsed.forEach(function(d, i){
+        allErrors = allErrors.concat(validateDrugEntry(d, i));
+      });
+
+      if(allErrors.length){
+        alert(
+          '❌ 匯入失敗,發現 ' + allErrors.length + ' 個問題,已取消匯入(原本的資料未變動):\n\n' +
+          allErrors.slice(0, 15).join('\n') +
+          (allErrors.length > 15 ? '\n…以及其他 ' + (allErrors.length - 15) + ' 個問題' : '')
+        );
+        event.target.value = '';
+        return;
+      }
+
+      autoBackupBeforeDestructive();
+
+      parsed.forEach(function(d){ if(!d.id) d.id = generateId(); });
+
+      drugs = parsed;
+      saveDrugs();
+      renderDrugSelect();
+      renderAdminList();
+      alert('✅ 匯入成功,共 ' + drugs.length + ' 筆藥物資料。（匯入前的資料已自動備份,如需復原可用「↩ 復原上一次自動備份」）');
+    }catch(err){
+      alert('❌ 匯入失敗:檔案不是有效的 JSON 格式。');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* =========================================================
+   初始化
+   ========================================================= */
+renderDrugSelect();
+switchTab('calc');
+</script>
+
+</body>
+</html>
