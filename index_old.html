@@ -1,1 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PACU數位藥物學習中心</title>
+
+<style>
+.card-preview{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:12px;
+margin:12px 0;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.card:hover .card-preview{
+transform:scale(1.02);
+}
+
+.hero-banner{
+max-width:1200px;
+margin:20px auto;
+}
+
+.hero-banner img{
+width:100%;
+height:260px;
+object-fit:cover;
+border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.15);
+}
+
+.card{
+overflow:hidden;
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Microsoft JhengHei",sans-serif;
+background:#f3f7fb;
+}
+
+header{
+background:#2B5C98;
+color:white;
+text-align:center;
+padding:40px 20px;
+}
+
+header h1{
+font-size:42px;
+margin-bottom:10px;
+}
+
+header p{
+font-size:18px;
+opacity:.9;
+}
+
+.header-badges{
+margin-top:15px;
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.header-badges span{
+background:rgba(255,255,255,.15);
+padding:8px 14px;
+border-radius:30px;
+font-size:14px;
+}
+
+.grid{
+max-width:1200px;
+margin:auto;
+padding:30px;
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:25px;
+}
+
+.card{
+background:white;
+border-radius:24px;
+padding:30px;
+min-height:250px;
+
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+transition:.3s;
+
+cursor:pointer;
+
+position:relative;
+}
+
+.card:hover{
+transform:translateY(-6px);
+}
+
+.card::after{
+content:"➜";
+position:absolute;
+right:25px;
+bottom:20px;
+font-size:28px;
+color:#2B5C98;
+opacity:.4;
+}
+
+.card h2{
+color:#2B5C98;
+font-size:36px;
+margin-bottom:20px;
+}
+
+.card p{
+font-size:18px;
+line-height:1.8;
+}
+
+.video-btn{
+display:block;
+background:#2B5C98;
+color:white;
+text-decoration:none;
+text-align:center;
+padding:14px;
+border-radius:12px;
+margin-bottom:12px;
+font-weight:bold;
+font-size:18px;
+}
+
+.video-btn:hover{
+background:#1f487a;
+}
+
+.footer{
+text-align:center;
+padding:25px;
+color:#666;
+font-size:14px;
+}
+
+@media (max-width:768px){
+
+.grid{
+grid-template-columns:1fr;
+padding:20px;
+}
+
+header h1{
+font-size:30px;
+}
+
+.card h2{
+font-size:30px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🏥 PACU數位藥物學習中心</h1>
+
+<p>
+Post-Anesthesia Care Unit Digital Drug Learning Center
+</p>
+
+<div class="header-badges">
+
+<span>🎥 PACU藥物教學影片</span>
+
+<span>💊 PACU藥命關頭</span>
+
+<span>🧰 PACU藥物工具箱</span>
+
+<span>📱 PACU藥物工具箱APP</span>
+
+<span>📱 PACU藥物換算中心</span>    
+</div>
+
+</header>
+
+<div class="grid">
+
+<!-- 教學影片 -->
+<div class="card">
+
+<h2>🎥 PACU教學影片</h2>
+
+<a class="video-btn"
+href="https://youtu.be/pYtL-s_E13I"
+target="_blank">
+▶ PACU-drug-learning Part 1
+</a>
+
+<p>
+常備藥物與急救車藥物介紹
+</p>
+
+<br>
+
+<a class="video-btn"
+href="https://youtu.be/oOXi-HwLcUI"
+target="_blank">
+▶ PACU-drug-learning Part 2
+</a>
+
+<p>
+管制藥物與急救車藥物配置口訣
+</p>
+
+</div>
+
+<!-- 藥命關頭 -->
+<div class="card"
+onclick="window.location.href='deathrace.html';">
+
+<h2>💊 PACU藥命關頭</h2>
+
+<p>
+情境式藥物學習遊戲
+</p>
+
+</div>
+
+<!-- 藥物工具箱 -->
+<div class="card"
+onclick="window.location.href='toolbox.html';">
+
+<h2>🧰 PACU藥物工具箱</h2>
+
+<p>
+網頁版藥物查詢
+</p>
+
+</div>
+
+<!-- APP -->
+<div class="card"
+onclick="window.location.href='app.html';">
+
+<h2>📱 PACU藥物工具箱 APP</h2>
+
+<p>
+手機版藥物查詢系統
+</p>
+
+</div>
+
+
+<!-- 藥物換算中心 -->
+<div class="card"
+onclick="window.location.href='calculator.html';">
+
+    <h2>🧮 PACU藥物換算中心</h2>
+
+    <p>
+        PACU常用藥物劑量與抽取量換算
+    </p>
+
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+
+PACU Drug Learning Center © 2026
+
+</div>
+
+</body>
+
+</html>
