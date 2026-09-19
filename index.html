@@ -141,21 +141,19 @@ margin-bottom:30px;
 transition:.3s;
 }
 
-.large-card:hover{
-transform:translateY(-4px);
-}
+.large-card h2,
+.small-card h2{
+    font-size:28px;
+    font-weight:700;
+    line-height:1.2;
+    color:#fff;
 
-.large-card h2{
-font-size:34px;
-margin-bottom:15px;
-}
+    margin-bottom:15px;
 
-.large-card p{
-font-size:17px;
-line-height:1.8;
-color:#dbe7f5;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
-
 .video-group{
 margin-top:25px;
 display:grid;
@@ -195,33 +193,17 @@ grid-template-columns:repeat(3,1fr);
 gap:25px;
 }
 
-.small-card{
-
-background:#101b2f;
-
-border:1px solid #223553;
-
-border-radius:20px;
-
-padding:28px;
-
-cursor:pointer;
-
-transition:.3s;
-}
-
-.small-card:hover{
-transform:translateY(-4px);
-}
-
 .small-card h2{
-font-size:28px;
-margin-bottom:15px;
-}
+    font-size: clamp(2rem, 4.5vw, 2.6rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
 
-.small-card p{
-color:#dbe7f5;
-line-height:1.8;
+    margin-bottom: 16px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .footer{
@@ -368,7 +350,7 @@ onclick="trackDrugToolbox();">
 <div class="small-card"
 onclick="window.location.href='app.html';">
 
-<h2>📱 PACU藥物工具箱 APP</h2>
+<h2>📱 PACU藥物 APP</h2>
 
 <p>
 手機版藥物查詢系統
