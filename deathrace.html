@@ -1952,7 +1952,16 @@ document.getElementById('bk-mode-replace').addEventListener('click', () => {
 // INIT
 // ─────────────────────────────────────────────
 loadData();
-showPage('cover');
+if(new URLSearchParams(location.search).get('admin')==='1'){
+  if(isAdminAuth){
+    renderAdminList();
+    showPage('admin');
+  }else{
+    showPage('login');
+  }
+}else{
+  showPage('cover');
+}
 updateStartButtonState();
 </script>
 

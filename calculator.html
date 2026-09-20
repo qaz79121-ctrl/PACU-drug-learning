@@ -1627,7 +1627,11 @@ function doImport(event){
    初始化
    ========================================================= */
 renderDrugSelect();
-switchTab('calc');
+if(new URLSearchParams(location.search).get('admin')==='1'){
+  switchTab('admin');
+}else{
+  switchTab('calc');
+}
 </script>
 
 </body>

@@ -393,6 +393,9 @@ window.onload = function(){
   document.querySelectorAll(".filter")[0].querySelector("button").classList.add("active");
   document.querySelectorAll(".filter")[1].querySelector("button").classList.add("active");
   render();
+  if(new URLSearchParams(location.search).get('admin')==='1'){
+    switchTab('admin');
+  }
 };
 
 /* ========== DEFAULT DRUGS ========== */
