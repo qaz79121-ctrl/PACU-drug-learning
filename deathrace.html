@@ -822,7 +822,7 @@
 // ─────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────
-const ADMIN_PASSWORD = "8888";
+const ADMIN_PASSWORD = "800510";
 const TOTAL_Q = 33;
 const TIME_PER_Q = 60;
 const WARN_THRESHOLD = 10;
@@ -1609,16 +1609,7 @@ document.getElementById('mute-btn').addEventListener('click', () => {
   document.getElementById('icon-mute').classList.toggle('hidden', !isMuted);
 });
 
-document.getElementById('admin-btn').addEventListener('click', () => {
-  if (isAdminAuth) {
-    renderAdminList();
-    showPage('admin');
-  } else {
-    showPage('login');
-    document.getElementById('pass-input').value = '';
-    document.getElementById('login-feedback').classList.add('hidden');
-  }
-});
+// Admin button removed — admin only accessible via index.html ?admin=1
 
 // Leaderboard
 document.getElementById('lb-back-btn').addEventListener('click', () => showPage('cover'));
@@ -1628,7 +1619,7 @@ document.getElementById('lb-home-btn').addEventListener('click', () => showPage(
 document.getElementById('retry-btn').addEventListener('click', startGame);
 document.getElementById('result-home-btn').addEventListener('click', () => showPage('cover'));
 
-// Login — password verification gate: only "8888" grants access to admin panel.
+// Login — password verification gate: only "800510" grants access to admin panel.
 document.getElementById('login-back-btn').addEventListener('click', () => showPage('cover'));
 document.getElementById('login-btn').addEventListener('click', () => {
   const pw = document.getElementById('pass-input').value;
