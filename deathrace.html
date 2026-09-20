@@ -7,29 +7,23 @@
 
 <style>
 
-.back-bar{
-  padding:10px 16px;
-  background:linear-gradient(90deg,#0c1929,#183352);
-  border-bottom:1px solid rgba(56,189,248,.15);
-}
-.back-bar a{
+.home-pill{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  background:rgba(255,255,255,.08);
+  gap:4px;
+  background:rgba(255,255,255,.1);
   color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.12);
-  padding:8px 16px;
-  border-radius:10px;
-  font-size:14px;
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
   font-weight:600;
   text-decoration:none;
-  transition:background .2s,border-color .2s;
-  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  transition:background .2s;
+  white-space:nowrap;
 }
-.back-bar a:hover{
-  background:rgba(255,255,255,.15);
-  border-color:rgba(56,189,248,.3);
+.home-pill:hover{
+  background:rgba(255,255,255,.2);
 }
 .back-home{display:none;}
 
@@ -361,12 +355,10 @@
 </style>
 </head>
 <body>
-<div class="back-bar">
-  <a href="index.html">🏠 返回PACU數位藥物學習中心</a>
-</div>
 <div class="wrap">
   <!-- TOP BAR -->
   <div class="topbar">
+    <a href="index.html" class="home-pill">🏠 學習中心</a>
     <div class="topbar-brand" id="go-cover">
       <div class="dot-pulse"></div>
       <span class="brand-text">PACU <span>DEATH RACE v3.9.5</span></span>
@@ -405,11 +397,6 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
       <div><strong>挑戰規則</strong>：共須作答 33 題，每題限時 60 秒。作答錯誤或超時將導致病人 Vital Signs 歸零。</div>
     </div>
-   <div class="back-home">
-  <a href="index.html">
-    🏠 返回PACU數位藥物學習中心
-  </a>
-</div>
     <div class="info-box hidden" id="no-questions-warning" style="border-color:#7f1d1d;background:rgba(26,0,0,.4)">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
       <div style="color:#f87171"><strong>題庫目前為空</strong>：請先至管理後台新增題目，或將題庫重置為預設值後再開始挑戰。</div>
@@ -497,11 +484,6 @@
       </button>
       <button class="btn-secondary" id="result-home-btn">返回主選單</button>
     </div>
-   <div class="back-home">
-  <a href="index.html">
-    🏠 返回學習平台
-  </a>
-</div>
   </div>
 
   <!-- PAGE: LEADERBOARD -->

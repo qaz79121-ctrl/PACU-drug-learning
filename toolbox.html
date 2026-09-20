@@ -7,27 +7,23 @@
 
 <style>
 
-.back-home{
-padding:20px;
-text-align:center;
+.home-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s;
+  white-space:nowrap;
 }
-
-.back-home a{
-display:inline-block;
-background:#0E6E63;
-color:white;
-padding:14px 28px;
-border-radius:14px;
-text-decoration:none;
-font-weight:700;
-font-size:16px;
-box-shadow:0 4px 12px rgba(0,0,0,.12);
-transition:.2s;
-}
-
-.back-home a:hover{
-background:#0A4F47;
-transform:translateY(-2px);
+.home-pill:hover{
+  background:rgba(255,255,255,.25);
 }
 *{box-sizing:border-box;}
 body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
@@ -46,8 +42,9 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 .search-bar {width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;font-size:14px;}
 .main{padding:15px;}
 
-.filter button{margin:4px;padding:6px 14px;border:none;border-radius:20px;background:#e0e7ff;cursor:pointer;font-size:13px;}
-.filter button.active{background:#2f54eb;color:white;}
+.filter button{margin:4px;padding:6px 14px;border:2px solid #2f54eb;border-radius:20px;background:#fff;color:#2f54eb;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s,color .15s;}
+.filter button:hover{background:#eef2ff;}
+.filter button.active{background:#2f54eb;color:white;border-color:#2f54eb;}
 
 .card{background:white;padding:15px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
 .card.risk-high{border-left:6px solid #ff4d4f;}
@@ -57,7 +54,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 .tag.risk-high{background:#ff4d4f;color:white;}
 .tag.risk-medium{background:#faad14;color:white;}
 
-.category{font-size:12px;background:#f0f0f0;padding:3px 8px;border-radius:6px;margin-left:8px;}
+.category{font-size:12px;background:#d6e4ff;color:#1d39c4;padding:3px 8px;border-radius:6px;margin-left:8px;font-weight:600;}
 
 .drug-name{padding:6px 12px;border-radius:10px;background:#bae7ff;cursor:pointer;}
 .drug-name:hover{background:#1890ff;color:white;}
@@ -168,6 +165,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 
 <!-- ===== Header ===== -->
 <div class="header">
+  <a href="index.html" class="home-pill">🏠 返回學習中心</a>
   <span>🧰 恢復室藥物工具箱</span>
   <div class="header-right">
     <button class="header-btn active-tab" id="tabFront" onclick="switchTab('front')">📋 藥物查詢</button>
@@ -744,13 +742,7 @@ document.getElementById("modalOverlay").addEventListener("click", function(e){
 
 </script>
 
-<div class="back-home">
 
-<a href="index.html">
-🏠 PACU數位藥物學習中心
-</a>
-
-</div>
 
 </body>
 </html>

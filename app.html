@@ -291,36 +291,27 @@ body{
 .tabitem.active{color:var(--teal);}
 
 ::-webkit-scrollbar{width:0;height:0;}
-.back-bar{
-  padding:10px 16px;
-  background:linear-gradient(90deg,#0c1929,#183352);
-  border-bottom:1px solid rgba(56,189,248,.15);
-}
-.back-bar a{
+.home-pill{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  background:rgba(255,255,255,.08);
+  gap:4px;
+  background:rgba(255,255,255,.1);
   color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.12);
-  padding:8px 16px;
-  border-radius:10px;
-  font-size:14px;
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
   font-weight:600;
   text-decoration:none;
-  transition:background .2s,border-color .2s;
-  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  transition:background .2s;
+  white-space:nowrap;
 }
-.back-bar a:hover{
-  background:rgba(255,255,255,.15);
-  border-color:rgba(56,189,248,.3);
+.home-pill:hover{
+  background:rgba(255,255,255,.2);
 }
 </style>
 </head>
 <body>
-<div class="back-bar">
-  <a href="index.html">🏠 返回PACU數位藥物學習中心</a>
-</div>
 
 <div class="app">
 
@@ -335,11 +326,10 @@ body{
 </div>
 
 <div style="display:flex;align-items:center;gap:8px;">
-
     <div class="count-pill" id="countPill">
         37 項
     </div>
-
+    <a href="index.html" class="home-pill">🏠 學習中心</a>
 </div>
 
 </div>
