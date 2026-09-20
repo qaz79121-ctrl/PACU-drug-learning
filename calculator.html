@@ -622,35 +622,36 @@ button:active{
   transform:translateY(0);
   box-shadow:none;
 }
-    .back-platform{
-    padding:10px 15px;
-    background:#f7fafc;
-    border-bottom:1px solid #d8e0e8;
+.back-bar{
+  padding:10px 16px;
+  background:linear-gradient(90deg,#0c1929,#183352);
+  border-bottom:1px solid rgba(56,189,248,.15);
 }
-
-.back-platform button{
-    width:auto;
-    padding:10px 16px;
-    background:#eef3f8;
-    border:1px solid #d8e0e8;
-    border-radius:8px;
-    font-size:14px;
-    font-weight:bold;
-    color:#2f4050;
-    cursor:pointer;
+.back-bar a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.08);
+  color:#e2e8f0;
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 16px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s,border-color .2s;
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
 }
-
-.back-platform button:hover{
-    background:#e0f2fe;
+.back-bar a:hover{
+  background:rgba(255,255,255,.15);
+  border-color:rgba(56,189,248,.3);
 }
 </style>
 </head>
 
 <body>
-    <div class="back-platform">
-    <button onclick="window.location.href='index.html'">
-        🏠 返回PACU數位藥物學習中心
-    </button>
+<div class="back-bar">
+  <a href="index.html">🏠 返回PACU數位藥物學習中心</a>
 </div>
 
 <div class="header">

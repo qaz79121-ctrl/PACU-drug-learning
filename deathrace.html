@@ -7,28 +7,31 @@
 
 <style>
 
-.back-home{
-padding:20px;
-text-align:center;
+.back-bar{
+  padding:10px 16px;
+  background:linear-gradient(90deg,#0c1929,#183352);
+  border-bottom:1px solid rgba(56,189,248,.15);
 }
-
-.back-home a{
-display:inline-block;
-background:#C62828;
-color:white;
-padding:14px 28px;
-border-radius:14px;
-text-decoration:none;
-font-weight:700;
-font-size:16px;
-box-shadow:0 4px 12px rgba(0,0,0,.12);
-transition:.2s;
+.back-bar a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.08);
+  color:#e2e8f0;
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 16px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s,border-color .2s;
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
 }
-
-.back-home a:hover{
-background:#B71C1C;
-transform:translateY(-2px);
+.back-bar a:hover{
+  background:rgba(255,255,255,.15);
+  border-color:rgba(56,189,248,.3);
 }
+.back-home{display:none;}
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -358,6 +361,9 @@ transform:translateY(-2px);
 </style>
 </head>
 <body>
+<div class="back-bar">
+  <a href="index.html">🏠 返回PACU數位藥物學習中心</a>
+</div>
 <div class="wrap">
   <!-- TOP BAR -->
   <div class="topbar">
