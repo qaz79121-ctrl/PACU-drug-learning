@@ -275,19 +275,19 @@ body{
   <div class="section-label">MOD-02 ～ MOD-05</div>
   <div class="module-grid">
 
-    <a class="mod-card" href="calculator.html" onclick="gtag('event','dose_calculation');">
+    <a class="mod-card" href="calculator.html">
       <h3><span class="card-icon">🧮</span>PACU藥物換算</h3>
       <p>PACU常用藥物劑量換算工具</p>
       <span class="card-tag">MOD-05</span>
     </a>
 
-    <a class="mod-card" href="deathrace.html" onclick="gtag('event','game_start');">
+    <a class="mod-card" href="deathrace.html">
       <h3><span class="card-icon">💊</span>PACU藥命關頭</h3>
       <p>情境式藥物學習遊戲</p>
       <span class="card-tag">MOD-02</span>
     </a>
 
-    <a class="mod-card" href="toolbox.html" onclick="gtag('event','drug_search');">
+    <a class="mod-card" href="toolbox.html">
       <h3><span class="card-icon">🧰</span>PACU藥物工具箱</h3>
       <p>網頁版藥物查詢系統</p>
       <span class="card-tag">MOD-03</span>
@@ -301,8 +301,17 @@ body{
 
   </div>
 
-  <div class="admin-login-link" onclick="document.getElementById('adminEntries').style.display=document.getElementById('adminEntries').style.display==='none'?'grid':'none'">
+  <div class="admin-login-link" id="adminLoginBtn" onclick="document.getElementById('adminLoginBox').style.display='block';this.style.display='none';">
     🔒 管理者登入
+  </div>
+  <div id="adminLoginBox" style="display:none;text-align:center;margin-top:40px;padding:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;">
+    <div style="font-size:32px;margin-bottom:10px;">🔒</div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">請輸入管理者密碼</div>
+    <input id="adminPwd" type="password" inputmode="numeric" placeholder="密碼" onkeydown="if(event.key==='Enter')checkAdminPwd()" style="width:180px;padding:10px;border:2px solid var(--border);border-radius:10px;font-size:16px;text-align:center;background:var(--bg);color:var(--text);">
+    <br><br>
+    <button onclick="checkAdminPwd()" style="padding:10px 28px;background:var(--accent);color:#0c1929;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">驗證</button>
+    <button onclick="document.getElementById('adminLoginBox').style.display='none';document.getElementById('adminLoginBtn').style.display='block';" style="padding:10px 20px;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;margin-left:8px;">取消</button>
+    <div id="adminPwdErr" style="color:#f87171;font-size:13px;margin-top:10px;min-height:20px;"></div>
   </div>
   <div class="admin-hub" id="adminEntries" style="display:none;">
     <a class="admin-entry" href="calculator.html?admin=1">
@@ -339,6 +348,18 @@ body{
 <div class="footer">
   PACU Digital Drug Learning Center © 2026
 </div>
+
+<script>
+function checkAdminPwd(){
+  const pwd = document.getElementById('adminPwd').value;
+  if(pwd === '1234'){
+    document.getElementById('adminLoginBox').style.display = 'none';
+    document.getElementById('adminEntries').style.display = 'grid';
+  }else{
+    document.getElementById('adminPwdErr').textContent = '❌ 密碼錯誤，請再試一次';
+  }
+}
+</script>
 
 </body>
 </html>
