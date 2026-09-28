@@ -7,8 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-
-  <style>
+<style>
 :root{
   --bg:#EDF2F1;
   --panel:#FFFFFF;
@@ -291,36 +290,6 @@ body{
 .tabitem.active{color:var(--teal);}
 
 ::-webkit-scrollbar{width:0;height:0;}
-.home-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(255,255,255,.1);
-  color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.15);
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:600;
-  text-decoration:none;
-  transition:background .2s;
-  white-space:nowrap;
-}
-.home-pill:hover{
-  background:rgba(255,255,255,.2);
-}
-.adm-btn{padding:8px 14px;border:1.5px solid var(--hairline);border-radius:10px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
-.adm-btn:hover{background:var(--teal-tint);}
-.adm-btn.adm-warn{color:#ef4444;border-color:#fca5a5;}
-.adm-card{background:var(--panel);border:1px solid var(--hairline);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
-.adm-card .adm-name{font-size:14px;font-weight:600;color:var(--ink);}
-.adm-card .adm-cat{font-size:11px;color:var(--ink-soft);}
-.adm-card .adm-actions{display:flex;gap:6px;}
-.adm-card .adm-actions button{padding:6px 10px;border:1px solid var(--hairline);border-radius:8px;background:var(--panel);font-size:12px;cursor:pointer;}
-.adm-card .adm-actions button:hover{background:var(--teal-tint);}
-.adm-card .adm-actions .del{color:#ef4444;border-color:#fca5a5;}
-.fl{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin:8px 0 4px;}
-.fi{display:block;width:100%;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -333,20 +302,12 @@ body{
         <div class="brand-mark">🧰</div>
         <div class="brand-text">
           <h1>恢復室藥物快查</h1>
-         <p>PACU Drug Quick Reference</p>
-</div>
-</div>
-
-<div style="display:flex;align-items:center;gap:8px;">
-    <div class="count-pill" id="countPill">
-        37 項
+          <p>PACU Drug Quick Reference</p>
+        </div>
+      </div>
+      <div class="count-pill" id="countPill">38 項</div>
     </div>
-    <a href="index.html" class="home-pill">🏠 返回學習中心</a>
-</div>
-
-</div>
-
-<div class="search-wrap">
+    <div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input class="search-input" id="search" placeholder="搜尋藥名／適應症／副作用">
     </div>
@@ -362,59 +323,18 @@ body{
 
   <div class="list" id="list"></div>
 
-  <!-- ===== Admin Panel ===== -->
-  <div id="adminPanel" style="display:none;">
-    <div id="adminLock" style="padding:40px 20px;text-align:center;">
-      <div style="font-size:48px;margin-bottom:12px;">🔒</div>
-      <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:16px;">請輸入後台維護密碼</div>
-      <input id="adminPwd" type="password" inputmode="numeric" placeholder="密碼" style="width:200px;padding:10px;border:2px solid var(--hairline);border-radius:10px;font-size:16px;text-align:center;" onkeydown="if(event.key==='Enter')unlockAdmin()">
-      <br><br>
-      <button onclick="unlockAdmin()" style="padding:10px 28px;background:var(--teal-deep);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">解鎖進入</button>
-      <div id="adminPwdErr" style="color:#ef4444;font-size:13px;margin-top:10px;min-height:20px;"></div>
-    </div>
-    <div id="adminContent" style="display:none;padding:16px;">
-      <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">⚙ 後台管理</div>
-      <div style="font-size:12px;color:var(--ink-soft);background:var(--teal-tint);padding:10px;border-radius:10px;margin-bottom:14px;">
-        💾 藥物資料儲存在此瀏覽器本機，清除瀏覽器資料會遺失，建議定期備份。
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-        <button class="adm-btn" onclick="openDrugForm()">＋ 新增藥物</button>
-        <button class="adm-btn" onclick="exportBackup()">📥 備份 JSON</button>
-        <button class="adm-btn" onclick="document.getElementById('importFile').click()">📤 匯入備份</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
-        <button class="adm-btn adm-warn" onclick="resetDefault()">↺ 重置預設</button>
-        <button class="adm-btn" onclick="toggleAdmin()">🔒 鎖定後台</button>
-      </div>
-      <div id="adminDrugList"></div>
-    </div>
-  </div>
-
-  <!-- ===== Drug Form Modal ===== -->
-  <div id="drugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;overflow-y:auto;">
-    <div style="max-width:500px;margin:40px auto;background:#fff;border-radius:16px;padding:24px;">
-      <div style="font-size:18px;font-weight:700;margin-bottom:16px;" id="formTitle">新增藥物</div>
-      <label class="fl">分類</label><input id="fCat" class="fi"><br>
-      <label class="fl">藥名</label><input id="fName" class="fi"><br>
-      <label class="fl">風險 (high/medium)</label><input id="fRisk" class="fi" value="high"><br>
-      <label class="fl">適應症</label><textarea id="fInd" class="fi" rows="2"></textarea><br>
-      <label class="fl">副作用 (每行一項)</label><textarea id="fAdr" class="fi" rows="3"></textarea><br>
-      <label class="fl">劑量</label><textarea id="fDose" class="fi" rows="2"></textarea><br>
-      <label class="fl">警語 (每行一項)</label><textarea id="fWarn" class="fi" rows="3"></textarea><br>
-      <label class="fl">低劑量濃度</label><input id="fConc" class="fi"><br>
-      <div style="display:flex;gap:10px;margin-top:16px;">
-        <button onclick="saveDrugForm()" style="flex:1;padding:12px;background:var(--teal-deep);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;">儲存</button>
-        <button onclick="closeDrugForm()" style="flex:1;padding:12px;background:#e5e7eb;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;">取消</button>
-      </div>
+  <div class="tabbar">
+    <div class="tabitem active">
+      <div class="ic">📋</div>
+      <div class="lb">藥物小卡</div>
     </div>
   </div>
 
 </div>
 
 <script>
-/* ================= DATA (localStorage with default fallback) ================= */
-const STORAGE_KEY = "pacu_app_drugs_v1";
-const ADMIN_PWD = "800510";
-const defaultDrugs = [
+/* ================= DATA ================= */
+const drugs = [
 {category:"抗凝血藥物",name:"Heparin 25000IU/5ml/Vial",risk:"high",indication:"血栓性栓塞症及其預防,抗凝血或其它臨床用途",adr:["出血","過敏反應(冷顫、蕁麻疹、發燒、鼻炎、氣喘樣的反應)","急性可逆性血小板過少症"],dose:"靜脈注射,間歇性或持續性靜脈輸注或深層皮下注射。",warning:["本藥禁用於：血友病、胃腸道出血性潰瘍、代償失調引起的嚴重高血壓症、中樞神經系統外科手術上、疑似腦出血症、漸近性心內膜炎、甲狀腺手術、疑似惡性腫瘤而有出血危險者、對Heparin Sodium過敏者"],lowDoseConc:"500IU/0.1ml"},
 {category:"止痛藥物",name:"Morphine 10mg/1mL/Amp",risk:"high",indication:"術後中重度疼痛",adr:["呼吸抑制"],dose:"靜脈注射每1~2小時 0.7~10mg",warning:["有依賴的可能性（戒斷症狀).","嗜眠、眩暈.","避免飲酒.","嚴重呼吸抑制、氣喘、肝病禁用"],lowDoseConc:"1mg/0.1ml"},
 {category:"止痛藥物",name:"Fentanyl (0.05mg/mL) 2mL/Amp",risk:"high",indication:"麻醉用藥、急性疼痛之緊急治療",adr:["肌肉僵硬","縮瞳","心跳緩慢","低血壓","噁心","嘔吐","眩暈"],dose:"(請依藥袋指示服用)\n1.注射用藥。\n2.靜脈滴注可使用D5W或NS當溶液；Y-site旁插可使用Lactated Ringer, Hetastarch 6%。",warning:["本藥會排泄到人體乳汁中，因此投與本藥後的24小時內不建議授乳。"],lowDoseConc:"5mcg/0.1ml"},
@@ -451,20 +371,11 @@ const defaultDrugs = [
 {category:"心血管藥物",name:"Cordarone 150mg/3mL/Amp",risk:"high",indication:"心室性心律不整（VT/VF）、心房顫動、其他嚴重心律不整",adr:["低血壓","心搏過慢","心律不整","噁心","肝功能異常","靜脈炎"],dose:"1.靜脈注射或輸注使用。\n2.依心律狀況及臨床反應調整劑量。\n3.稀釋液只能使用等張葡萄糖溶液，如：5%葡萄糖溶液(D5W)。",warning:["給藥時需持續心電圖監測。","可能造成低血壓或心搏過慢。","長期使用可能影響肺、肝及甲狀腺功能。","避免快速靜脈推注（可能引起血壓下降）。"],lowDoseConc:"50mg/1ml"},
 {category:"呼吸道藥物",name:"Salbutamol 5mg/2.5mL/Amp",risk:"medium",indication:"支氣管氣喘、支氣管痙攣、COPD急性發作",adr:["心悸","顫抖","低血鉀","頭痛","焦躁"],dose:"1.霧化吸入（nebulization）使用。\n2.可依病況重複給藥。",warning:["可能引起心跳加快及心悸，心臟病患者需謹慎使用。","可能造成低血鉀，尤其大量或重複使用時。","使用後若症狀未改善或惡化應立即評估。","避免過量使用以免產生心血管副作用。"],lowDoseConc:"1mg/0.5ml"},
 {category:"利尿劑",name:"Mannitol 20% 100mL/BT",risk:"high",indication:"降低顱內壓、腦水腫、急性青光眼、促進利尿",adr:["低血壓","電解質不平衡","脫水","頭痛","噁心","腎功能惡化"],dose:"1.靜脈輸注使用，依醫囑調整劑量及速率。\n2.使用前應確認無結晶，必要時溫溶後使用。",warning:["使用時需監測血壓、尿量及電解質。","腎功能不全或無尿患者應避免使用。","可能導致體液與電解質失衡。","快速輸注可能引起低血壓或肺水腫。"],lowDoseConc:"10ml/0.1BT"},
-{category:"止痛藥物",name:"Nalbuphine 10mg/1ml/Amp",risk:"medium",indication:"解除中度到嚴重疼痛,麻醉補助劑",adr:["鎮靜","出汗","嘔吐","噁心","頭暈","眩暈","頭痛"],dose:"皮下、肌肉或靜脈注射。",warning:["長期使用後突然停藥可能引起戒斷症狀，如腹部痙攣、噁心、嘔吐、流淚、鼻溢、憂鬱、不安、體溫昇高或毛豎起。","具有鎮靜作用，開車或操作器械應小心。"],lowDoseConc:"1mg/0.1ml"}
+{category:"止痛藥物",name:"Nalbuphine 10mg/1ml/Amp",risk:"medium",indication:"解除中度到嚴重疼痛,麻醉補助劑",adr:["鎮靜","出汗","嘔吐","噁心","頭暈","眩暈","頭痛"],dose:"皮下、肌肉或靜脈注射。",warning:["長期使用後突然停藥可能引起戒斷症狀，如腹部痙攣、噁心、嘔吐、流淚、鼻溢、憂鬱、不安、體溫昇高或毛豎起。","具有鎮靜作用，開車或操作器械應小心。"],lowDoseConc:"1mg/0.1ml"},
+{category:"肌肉鬆弛劑",name:"Rocuronium 100mg/10mL/Amp",risk:"high",indication:"全身麻醉的輔佐藥，以幫助支氣管內插管、提供手術需快速麻醉誘導",adr:["注射部位疼痛","過敏反應","搔癢"],dose:"靜脈輸注",warning:["全身麻醉的輔佐藥，以幫助支氣管內插管、提供手術需快速麻醉誘導","屬神經肌肉阻斷劑，會造成呼吸肌麻痺，使用後須有輔助通氣及氣道管理設備待命","需由熟悉神經肌肉阻斷劑使用及氣道管理之人員給藥"],lowDoseConc:"1mg/0.1ml"}
 ];
 
-function loadDrugs(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){ return JSON.parse(raw); }
-  }catch(e){}
-  return JSON.parse(JSON.stringify(defaultDrugs));
-}
-function saveDrugs(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(drugs)); }catch(e){} }
-let drugs = loadDrugs();
-
-const categories = [...new Set(["全部",...drugs.map(d=>d.category)])];
+const categories = ["全部","止痛藥物","鎮靜藥物","急救藥物","心血管藥物","呼吸道藥物","止吐藥物","類固醇藥物","抗組織胺藥物","抗凝血藥物","利尿劑","肌肉鬆弛劑"];
 
 /* ================= STATE ================= */
 let state = {
@@ -634,158 +545,6 @@ document.getElementById("search").addEventListener("input", (e)=>{
 
 document.getElementById("countPill").textContent = drugs.length + " 項";
 render();
-
-/* ================= ADMIN ================= */
-let adminUnlocked = false;
-let editIndex = -1;
-
-function toggleAdmin(){
-  const panel = document.getElementById("adminPanel");
-  const front = document.querySelector(".chiprow")?.parentElement;
-  if(panel.style.display === "none"){
-    panel.style.display = "block";
-    document.getElementById("list").style.display = "none";
-    document.querySelectorAll(".chiprow,.segtabs,.search-wrap").forEach(e=>e.style.display="none");
-    if(!adminUnlocked){
-      document.getElementById("adminLock").style.display = "block";
-      document.getElementById("adminContent").style.display = "none";
-    }else{
-      renderAdminList();
-    }
-  }else{
-    panel.style.display = "none";
-    document.getElementById("list").style.display = "block";
-    document.querySelectorAll(".chiprow,.segtabs,.search-wrap").forEach(e=>e.style.display="");
-    adminUnlocked = false;
-    document.getElementById("adminContent").style.display = "none";
-    document.getElementById("adminLock").style.display = "block";
-    document.getElementById("adminPwd").value = "";
-    render();
-  }
-}
-
-function unlockAdmin(){
-  const pwd = document.getElementById("adminPwd").value;
-  if(pwd === ADMIN_PWD){
-    adminUnlocked = true;
-    document.getElementById("adminLock").style.display = "none";
-    document.getElementById("adminContent").style.display = "block";
-    renderAdminList();
-  }else{
-    document.getElementById("adminPwdErr").textContent = "❌ 密碼錯誤";
-  }
-}
-
-function renderAdminList(){
-  const el = document.getElementById("adminDrugList");
-  el.innerHTML = drugs.map((d,i)=>
-    `<div class="adm-card">
-      <div><div class="adm-name">${escapeHtml(d.name)}</div><div class="adm-cat">${escapeHtml(d.category)} ・ ${d.risk}</div></div>
-      <div class="adm-actions">
-        <button onclick="editDrug(${i})">✏ 編輯</button>
-        <button class="del" onclick="deleteDrug(${i})">🗑 刪除</button>
-      </div>
-    </div>`
-  ).join("");
-}
-
-function openDrugForm(){
-  editIndex = -1;
-  document.getElementById("formTitle").textContent = "新增藥物";
-  ["fCat","fName","fInd","fDose","fConc"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("fRisk").value = "high";
-  document.getElementById("fAdr").value = "";
-  document.getElementById("fWarn").value = "";
-  document.getElementById("drugModal").style.display = "block";
-}
-
-function editDrug(i){
-  editIndex = i;
-  const d = drugs[i];
-  document.getElementById("formTitle").textContent = "編輯藥物";
-  document.getElementById("fCat").value = d.category||"";
-  document.getElementById("fName").value = d.name||"";
-  document.getElementById("fRisk").value = d.risk||"high";
-  document.getElementById("fInd").value = d.indication||"";
-  document.getElementById("fAdr").value = (d.adr||[]).join("\n");
-  document.getElementById("fDose").value = d.dose||"";
-  document.getElementById("fWarn").value = (d.warning||[]).join("\n");
-  document.getElementById("fConc").value = d.lowDoseConc||"";
-  document.getElementById("drugModal").style.display = "block";
-}
-
-function closeDrugForm(){
-  document.getElementById("drugModal").style.display = "none";
-}
-
-function saveDrugForm(){
-  const obj = {
-    category: document.getElementById("fCat").value.trim(),
-    name: document.getElementById("fName").value.trim(),
-    risk: document.getElementById("fRisk").value.trim()||"high",
-    indication: document.getElementById("fInd").value.trim(),
-    adr: document.getElementById("fAdr").value.trim().split("\n").map(s=>s.trim()).filter(Boolean),
-    dose: document.getElementById("fDose").value.trim(),
-    warning: document.getElementById("fWarn").value.trim().split("\n").map(s=>s.trim()).filter(Boolean),
-    lowDoseConc: document.getElementById("fConc").value.trim()
-  };
-  if(!obj.name){ alert("請輸入藥名"); return; }
-  if(editIndex >= 0){ drugs[editIndex] = obj; }
-  else{ drugs.push(obj); }
-  saveDrugs();
-  closeDrugForm();
-  renderAdminList();
-}
-
-function deleteDrug(i){
-  if(!confirm("確定刪除「"+drugs[i].name+"」？")) return;
-  drugs.splice(i,1);
-  saveDrugs();
-  renderAdminList();
-}
-
-function exportBackup(){
-  const blob = new Blob([JSON.stringify(drugs,null,2)],{type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "pacu_app_backup.json";
-  a.click();
-}
-
-function importBackup(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    try{
-      const data = JSON.parse(ev.target.result);
-      if(!Array.isArray(data)){ alert("格式錯誤"); return; }
-      if(!confirm("匯入將覆蓋現有資料，確定嗎？")) return;
-      drugs.length = 0;
-      data.forEach(d=>drugs.push(d));
-      saveDrugs();
-      renderAdminList();
-      alert("匯入成功，共 "+drugs.length+" 筆");
-    }catch(err){ alert("檔案解析失敗"); }
-  };
-  reader.readAsText(file);
-  e.target.value = "";
-}
-
-function resetDefault(){
-  if(!confirm("將重置為預設藥物資料，現有修改會遺失，確定嗎？")) return;
-  drugs.length = 0;
-  defaultDrugs.forEach(d=>drugs.push(JSON.parse(JSON.stringify(d))));
-  saveDrugs();
-  renderAdminList();
-  alert("已重置為預設資料");
-}
-
-// URL parameter auto-open admin
-if(new URLSearchParams(location.search).get('admin')==='1'){
-  toggleAdmin();
-}
 </script>
- 
 </body>
 </html>

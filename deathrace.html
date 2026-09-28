@@ -4,29 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PACU DEATH RACE v3.9.5 — 藥命關頭</title>
-
 <style>
-
-.home-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(255,255,255,.1);
-  color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.15);
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:600;
-  text-decoration:none;
-  transition:background .2s;
-  white-space:nowrap;
-}
-.home-pill:hover{
-  background:rgba(255,255,255,.2);
-}
-.back-home{display:none;}
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg: #070708;
@@ -358,7 +336,6 @@
 <div class="wrap">
   <!-- TOP BAR -->
   <div class="topbar">
-    <a href="index.html" class="home-pill">🏠 返回學習中心</a>
     <div class="topbar-brand" id="go-cover">
       <div class="dot-pulse"></div>
       <span class="brand-text">PACU <span>DEATH RACE v3.9.5</span></span>
@@ -367,6 +344,9 @@
       <button class="icon-btn" id="mute-btn" title="靜音切換">
         <svg id="icon-sound" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         <svg id="icon-mute" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+      <button class="icon-btn settings" id="admin-btn" title="管理後台">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
   </div>
@@ -822,7 +802,7 @@
 // ─────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────
-const ADMIN_PASSWORD = "800510";
+const ADMIN_PASSWORD = "8888";
 const TOTAL_Q = 33;
 const TIME_PER_Q = 60;
 const WARN_THRESHOLD = 10;
@@ -863,7 +843,7 @@ const DEFAULT_DRUGS = [
   { drug:"Nicardipine", spec:"10mg", question:"術後血壓極高，醫囑Nicardipine 2mg IVP st，應抽取多少 ml？", options:["20ml","2ml","0.2ml","10ml"], answer:"2ml", vitals:{hr:152,spo2:98,rr:16,bp:"205/102"} },
   { drug:"Labetalol", spec:"25mg", question:"控制高血壓，醫囑Labetalol 2mg IVP，應抽取多少 ml？", options:["1ml","0.2ml","3ml","0.4ml"], answer:"0.4ml", vitals:{hr:115,spo2:98,rr:18,bp:"192/115"} },
   { drug:"Glucose 50%", spec:"50%", question:"ABG data Glucose 68mg/dL，醫囑Glucose 50% 1Amp st，應抽取幾 ml？", options:["10ml","50ml","20ml","5ml"], answer:"20ml", vitals:{hr:111,spo2:95,rr:20,bp:"122/72"} },
-  { drug:"Rocuronium", spec:"50mg", question:"病人預重新放置氣管內管，醫囑Rocuronium 15mg IVP，應抽取多少 ml？", options:["15ml","2ml","1.5ml","2.5ml"], answer:"1.5ml", vitals:{hr:92,spo2:90,rr:10,bp:"112/72"} },
+  { drug:"Rocuronium", spec:"100mg/10mL/Amp", question:"病人預重新放置氣管內管，醫囑Rocuronium 15mg IVP，應抽取多少 ml？", options:["15ml","2ml","1.5ml","2.5ml"], answer:"1.5ml", vitals:{hr:92,spo2:90,rr:10,bp:"112/72"} },
   { drug:"Tetrastarch", spec:"500ml", question:"術中BLOOD LOSS 500ML，醫囑Tetrastarch 0.4 bot IVD，應滴注幾 ml？", options:["50ml","100ml","300ml","200ml"], answer:"200ml", vitals:{hr:117,spo2:90,rr:12,bp:"72/38"} },
   { drug:"Nitrostat", spec:"0.6mg", question:"病人主訴胸悶心臟痛，醫囑Nitrostat 0.6mg SL，應給予多少 tab？", options:["0.5tab","2tab","1tab","1.5tab"], answer:"1tab", vitals:{hr:80,spo2:99,rr:16,bp:"118/78"} }
 ];
@@ -1609,7 +1589,16 @@ document.getElementById('mute-btn').addEventListener('click', () => {
   document.getElementById('icon-mute').classList.toggle('hidden', !isMuted);
 });
 
-// Admin button removed — admin only accessible via index.html ?admin=1
+document.getElementById('admin-btn').addEventListener('click', () => {
+  if (isAdminAuth) {
+    renderAdminList();
+    showPage('admin');
+  } else {
+    showPage('login');
+    document.getElementById('pass-input').value = '';
+    document.getElementById('login-feedback').classList.add('hidden');
+  }
+});
 
 // Leaderboard
 document.getElementById('lb-back-btn').addEventListener('click', () => showPage('cover'));
@@ -1619,7 +1608,7 @@ document.getElementById('lb-home-btn').addEventListener('click', () => showPage(
 document.getElementById('retry-btn').addEventListener('click', startGame);
 document.getElementById('result-home-btn').addEventListener('click', () => showPage('cover'));
 
-// Login — password verification gate: only "800510" grants access to admin panel.
+// Login — password verification gate: only "8888" grants access to admin panel.
 document.getElementById('login-back-btn').addEventListener('click', () => showPage('cover'));
 document.getElementById('login-btn').addEventListener('click', () => {
   const pw = document.getElementById('pass-input').value;
@@ -1940,18 +1929,8 @@ document.getElementById('bk-mode-replace').addEventListener('click', () => {
 // INIT
 // ─────────────────────────────────────────────
 loadData();
-if(new URLSearchParams(location.search).get('admin')==='1'){
-  if(isAdminAuth){
-    renderAdminList();
-    showPage('admin');
-  }else{
-    showPage('login');
-  }
-}else{
-  showPage('cover');
-}
+showPage('cover');
 updateStartButtonState();
 </script>
-
 </body>
 </html>

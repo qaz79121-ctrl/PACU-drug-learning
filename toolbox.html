@@ -6,25 +6,6 @@
 <title>恢復室藥物工具箱</title>
 
 <style>
-
-.home-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(255,255,255,.12);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.25);
-  padding:5px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:600;
-  text-decoration:none;
-  transition:background .2s;
-  white-space:nowrap;
-}
-.home-pill:hover{
-  background:rgba(255,255,255,.25);
-}
 *{box-sizing:border-box;}
 body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 
@@ -42,9 +23,8 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 .search-bar {width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;font-size:14px;}
 .main{padding:15px;}
 
-.filter button{margin:4px;padding:6px 14px;border:2px solid #2f54eb;border-radius:20px;background:#fff;color:#2f54eb;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s,color .15s;}
-.filter button:hover{background:#eef2ff;}
-.filter button.active{background:#2f54eb;color:white;border-color:#2f54eb;}
+.filter button{margin:4px;padding:6px 14px;border:none;border-radius:20px;background:#e0e7ff;cursor:pointer;font-size:13px;}
+.filter button.active{background:#2f54eb;color:white;}
 
 .card{background:white;padding:15px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
 .card.risk-high{border-left:6px solid #ff4d4f;}
@@ -54,7 +34,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 .tag.risk-high{background:#ff4d4f;color:white;}
 .tag.risk-medium{background:#faad14;color:white;}
 
-.category{font-size:12px;background:#d6e4ff;color:#1d39c4;padding:3px 8px;border-radius:6px;margin-left:8px;font-weight:600;}
+.category{font-size:12px;background:#f0f0f0;padding:3px 8px;border-radius:6px;margin-left:8px;}
 
 .drug-name{padding:6px 12px;border-radius:10px;background:#bae7ff;cursor:pointer;}
 .drug-name:hover{background:#1890ff;color:white;}
@@ -165,10 +145,10 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 
 <!-- ===== Header ===== -->
 <div class="header">
-  <a href="index.html" class="home-pill">🏠 返回學習中心</a>
   <span>🧰 恢復室藥物工具箱</span>
   <div class="header-right">
     <button class="header-btn active-tab" id="tabFront" onclick="switchTab('front')">📋 藥物查詢</button>
+    <button class="header-btn" id="tabAdmin" onclick="switchTab('admin')">⚙ 後台管理</button>
   </div>
 </div>
 
@@ -189,6 +169,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
     <button onclick="setCategory('抗組織胺藥物');highlightFilter(this)">抗組織胺藥物</button>
     <button onclick="setCategory('抗凝血藥物');highlightFilter(this)">抗凝血藥物</button>
     <button onclick="setCategory('利尿劑');highlightFilter(this)">利尿劑</button>
+    <button onclick="setCategory('肌肉鬆弛劑');highlightFilter(this)">肌肉鬆弛劑</button>
   </div>
 
   <div class="filter" id="riskFilter">
@@ -258,7 +239,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
       <option>止痛藥物</option><option>鎮靜藥物</option><option>急救藥物</option>
       <option>心血管藥物</option><option>呼吸道藥物</option><option>止吐藥物</option>
       <option>類固醇藥物</option><option>抗組織胺藥物</option><option>抗凝血藥物</option>
-      <option>利尿劑</option>
+      <option>利尿劑</option><option>肌肉鬆弛劑</option>
     </select>
 
     <label>風險等級</label>
@@ -300,7 +281,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
    主控台呼叫 adminUnlocked=true 並手動切換畫面），只適合防止一般人員
    誤觸或隨手翻閱後台，不能取代真正的伺服器端存取控制。若後台管理的資料
    具敏感性或需要正式權限控管，建議改用具備登入驗證的後端服務。 */
-const ADMIN_PWD_HASH = "78ed3608d3c9e54fb8af45104ec486635c0218b51730f204e3d871e12c4c0506"; // sha256("800510")
+const ADMIN_PWD_HASH = "2926a2731f4b312c08982cacf8061eb14bf65c1a87cc5d70e864e079c6220731"; // sha256("8888")
 let adminUnlocked = false;
 let loginFailCount = 0;
 let loginLockUntil = 0;
@@ -392,9 +373,6 @@ window.onload = function(){
   document.querySelectorAll(".filter")[0].querySelector("button").classList.add("active");
   document.querySelectorAll(".filter")[1].querySelector("button").classList.add("active");
   render();
-  if(new URLSearchParams(location.search).get('admin')==='1'){
-    switchTab('admin');
-  }
 };
 
 /* ========== DEFAULT DRUGS ========== */
@@ -436,6 +414,7 @@ const defaultDrugs = [
 {category:"呼吸道藥物",name:"Salbutamol 5mg/2.5mL/Amp",risk:"medium",indication:"支氣管氣喘、支氣管痙攣、COPD急性發作",adr:["心悸","顫抖","低血鉀","頭痛","焦躁"],dose:"1.霧化吸入（nebulization）使用。\n2.可依病況重複給藥。",warning:["可能引起心跳加快及心悸，心臟病患者需謹慎使用。","可能造成低血鉀，尤其大量或重複使用時。","使用後若症狀未改善或惡化應立即評估。","避免過量使用以免產生心血管副作用。"],lowDoseConc:"1mg/0.5ml"},
 {category:"利尿劑",name:"Mannitol 20% 100mL/BT",risk:"high",indication:"降低顱內壓、腦水腫、急性青光眼、促進利尿",adr:["低血壓","電解質不平衡","脫水","頭痛","噁心","腎功能惡化"],dose:"1.靜脈輸注使用，依醫囑調整劑量及速率。\n2.使用前應確認無結晶，必要時溫溶後使用。",warning:["使用時需監測血壓、尿量及電解質。","腎功能不全或無尿患者應避免使用。","可能導致體液與電解質失衡。","快速輸注可能引起低血壓或肺水腫。"],lowDoseConc:"10ml/0.1BT"},
 {category:"止痛藥物",name:"Nalbuphine 10mg/1ml/Amp",risk:"medium",indication:"解除中度到嚴重疼痛,麻醉補助劑",adr:["鎮靜","出汗","嘔吐","噁心","頭暈","眩暈","頭痛"],dose:"皮下、肌肉或靜脈注射。",warning:["長期使用後突然停藥可能引起戒斷症狀，如腹部痙攣、噁心、嘔吐、流淚、鼻溢、憂鬱、不安、體溫昇高或毛豎起。","具有鎮靜作用，開車或操作器械應小心。"],lowDoseConc:"1mg/0.1ml"},
+{category:"肌肉鬆弛劑",name:"Rocuronium 100mg/10mL/Amp",risk:"high",indication:"全身麻醉的輔佐藥，以幫助支氣管內插管、提供手術需快速麻醉誘導",adr:["注射部位疼痛","過敏反應","搔癢"],dose:"靜脈輸注",warning:["全身麻醉的輔佐藥，以幫助支氣管內插管、提供手術需快速麻醉誘導","屬神經肌肉阻斷劑，會造成呼吸肌麻痺，僅限具氣道管理能力之人員於監測下使用","誤用於未插管/未行呼吸支持之病人極度危險，可能導致窒息"],lowDoseConc:"1mg/0.1ml"},
 ];
 
 /* ========== DRUG DATA (localStorage persistence) ========== */
@@ -444,7 +423,25 @@ const STORAGE_KEY = "recoveryRoomDrugs";
 function loadDrugs(){
   let saved = localStorage.getItem(STORAGE_KEY);
   if(saved){
-    try{ return JSON.parse(saved); }catch(e){}
+    try{
+      let data = JSON.parse(saved);
+      if(Array.isArray(data)){
+        // 瀏覽器可能還存著「較舊版本檔案」寫入的資料，之後這份檔案的
+        // defaultDrugs 清單如果新增了藥物，舊快取不會自動出現。
+        // 這裡以「藥物名稱」比對，把預設清單裡快取中還沒有的藥物自動補進去，
+        // 但完全不動使用者既有的資料（包含使用者自行新增/編輯過的項目）。
+        let existingNames = new Set(data.map(d => d.name));
+        let addedAny = false;
+        defaultDrugs.forEach(dd=>{
+          if(!existingNames.has(dd.name)){
+            data.push(JSON.parse(JSON.stringify(dd)));
+            addedAny = true;
+          }
+        });
+        if(addedAny) saveDrugsToStorage(data);
+        return data;
+      }
+    }catch(e){}
   }
   saveDrugsToStorage(defaultDrugs);
   return JSON.parse(JSON.stringify(defaultDrugs));
@@ -701,16 +698,25 @@ function resetDefaults(){
 
 /* ========== BACKUP / IMPORT ========== */
 function exportBackup(){
-  let json = JSON.stringify(drugs, null, 2);
-  let blob = new Blob([json], {type:"application/json"});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
-  a.href = url;
-  let ts = new Date().toISOString().slice(0,10);
-  a.download = `藥物備份_${ts}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast("📥 備份已下載");
+  try{
+    let json = JSON.stringify(drugs, null, 2);
+    let blob = new Blob([json], {type:"application/json"});
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    let ts = new Date().toISOString().slice(0,10);
+    a.download = `藥物備份_${ts}.json`;
+    // 部分瀏覽器（尤其 Safari）要求 <a> 必須先掛載到 DOM 才會正確觸發下載，
+    // 且若 click() 後立即 revoke URL，下載可能還沒開始就被取消，
+    // 因此這裡改為：掛載 -> 點擊 -> 移除 -> 延遲釋放 URL。
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast("📥 備份已下載");
+  }catch(err){
+    showToast("❌ 備份下載失敗，請改用瀏覽器開啟此頁面後再試");
+  }
 }
 
 function importBackup(event){
@@ -743,8 +749,6 @@ document.getElementById("modalOverlay").addEventListener("click", function(e){
 });
 
 </script>
-
-
 
 </body>
 </html>

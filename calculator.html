@@ -43,32 +43,36 @@ body{
 .header{
   background:linear-gradient(90deg,var(--brand-deep),#3c556e);
   color:white;
-  padding:12px 16px;
-  font-size:18px;
+  padding:12px 20px;
+  font-size:20px;
   font-weight:bold;
   letter-spacing:1px;
   position:relative;
-  display:flex;
-  align-items:center;
-  gap:10px;
 }
 
 /* 後台管理按鈕:縮小至右上方 */
 .admin-corner-btn{
+  position:absolute;
+  top:50%;
+  right:16px;
+  transform:translateY(-50%);
   background:rgba(255,255,255,0.15);
   color:#fff;
   border:1px solid rgba(255,255,255,0.3);
-  padding:5px 12px;
+  padding:6px 12px;
   font-size:12px;
   font-weight:bold;
-  border-radius:20px;
+  border-radius:6px;
   cursor:pointer;
   letter-spacing:0.5px;
   transition:background .15s ease;
-  white-space:nowrap;
+  width:auto;
+  margin:0;
 }
 .admin-corner-btn:hover{
   background:rgba(255,255,255,0.25);
+  transform:translateY(-50%);
+  box-shadow:none;
 }
 .admin-corner-btn.active{
   background:rgba(255,255,255,0.3);
@@ -412,7 +416,7 @@ optgroup{
 }
 
 /* ============ 後台管理返回按鈕 ============ */
-.admin-back-bar{
+.back-bar{
   display:flex;
   align-items:center;
   padding:10px 20px;
@@ -618,35 +622,14 @@ button:active{
   transform:translateY(0);
   box-shadow:none;
 }
-.home-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(255,255,255,.1);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.2);
-  padding:5px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:600;
-  text-decoration:none;
-  transition:background .2s;
-  white-space:nowrap;
-}
-.home-pill:hover{
-  background:rgba(255,255,255,.22);
-}
-.header-title{
-  flex:1;
-  text-align:center;
-}
 </style>
 </head>
 
 <body>
+
 <div class="header">
-  <a href="index.html" class="home-pill">🏠 返回學習中心</a>
-  <span class="header-title">藥物劑量換算系統</span>
+  藥物劑量換算系統
+  <button class="admin-corner-btn" id="adminCornerBtn" onclick="switchTab('admin')">⚙ 後台管理</button>
 </div>
 <div class="sub-header">中國附醫｜ 恢復室 PACU</div>
 
@@ -703,7 +686,7 @@ v1.7 ｜ 2026-07-17 ｜ 中國附醫 PACU
 <!-- ============ 後台管理頁 ============ -->
 <div id="adminView" class="view hidden">
 
-  <div class="admin-back-bar">
+  <div class="back-bar">
     <button class="back-btn" onclick="switchTab('calc')">← 返回藥物換算</button>
   </div>
 
@@ -848,7 +831,7 @@ v1.7 ｜ 2026-07-17 ｜ 中國附醫 PACU
    ========================================================= */
 const STORAGE_KEY = 'pacu_dose_calc_drugs_v1';
 const BACKUP_KEY = 'pacu_dose_calc_drugs_autobackup_v1';
-const ADMIN_PASSWORD = '800510';
+const ADMIN_PASSWORD = '8888';
 const ALLOWED_TYPES = ['mg','mcg','IU','amp','bot','tab'];
 
 const DEFAULT_DRUGS = [
@@ -880,6 +863,7 @@ const DEFAULT_DRUGS = [
   { id:'nicardipine', label:'Nicardipine (10 mg / 10 mL / Amp)', type:'mg', strength:1, totalml:10, totalamount:10, amountunit:'mg' },
   { id:'nitroglycerin', label:'Nitroglycerin (0.6 mg / tab , 25 tab / bot)', type:'tab', strength:0.6, totalamount:0.6, amountunit:'mg', packcount:25 },
   { id:'prochlorperazine', label:'Prochlorperazine (5 mg / 1 mL / Amp)', type:'mg', strength:5, totalml:1, totalamount:5, amountunit:'mg' },
+  { id:'rocuronium', label:'Rocuronium (100 mg / 10 mL / Amp)', type:'mg', strength:10, totalml:10, totalamount:100, amountunit:'mg' },
   { id:'salbutamol', label:'Salbutamol (5 mg / 2.5 mL / Amp)', type:'mg', strength:2, totalml:2.5, totalamount:5, amountunit:'mg' },
   { id:'sodium_bicarbonate', label:'Sodium Bicarbonate 7% (20 mL / Amp)', type:'amp', ampml:20, totalml:20 },
   { id:'hydroxyethyl_starch', label:'Hydroxyethyl starch (500 mL / bot)', type:'bot', botml:500, totalml:500 }
@@ -1626,11 +1610,7 @@ function doImport(event){
    初始化
    ========================================================= */
 renderDrugSelect();
-if(new URLSearchParams(location.search).get('admin')==='1'){
-  switchTab('admin');
-}else{
-  switchTab('calc');
-}
+switchTab('calc');
 </script>
 
 </body>
