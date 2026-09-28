@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PACU DEATH RACE v3.9.5 — 藥命關頭</title>
 <style>
+.home-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(255,255,255,.1);
+  color:#e2e8f0;
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s;
+  white-space:nowrap;
+}
+.home-pill:hover{
+  background:rgba(255,255,255,.2);
+}
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg: #070708;
@@ -336,6 +354,7 @@
 <div class="wrap">
   <!-- TOP BAR -->
   <div class="topbar">
+    <a href="index.html" class="home-pill">🏠 返回學習中心</a>
     <div class="topbar-brand" id="go-cover">
       <div class="dot-pulse"></div>
       <span class="brand-text">PACU <span>DEATH RACE v3.9.5</span></span>

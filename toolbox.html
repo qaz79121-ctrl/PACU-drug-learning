@@ -6,6 +6,24 @@
 <title>恢復室藥物工具箱</title>
 
 <style>
+.home-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(255,255,255,.1);
+  color:#e2e8f0;
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s;
+  white-space:nowrap;
+}
+.home-pill:hover{
+  background:rgba(255,255,255,.25);
+}
 *{box-sizing:border-box;}
 body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 
@@ -145,6 +163,7 @@ body {margin:0;font-family:"Segoe UI",sans-serif;background:#f4f6f9;}
 
 <!-- ===== Header ===== -->
 <div class="header">
+  <a href="index.html" class="home-pill">🏠 返回學習中心</a>
   <span>🧰 恢復室藥物工具箱</span>
   <div class="header-right">
     <button class="header-btn active-tab" id="tabFront" onclick="switchTab('front')">📋 藥物查詢</button>

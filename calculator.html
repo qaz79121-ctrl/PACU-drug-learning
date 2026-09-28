@@ -622,13 +622,32 @@ button:active{
   transform:translateY(0);
   box-shadow:none;
 }
+.home-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(255,255,255,.1);
+  color:#e2e8f0;
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s;
+  white-space:nowrap;
+}
+.home-pill:hover{
+  background:rgba(255,255,255,.22);
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-  藥物劑量換算系統
+  <a href="index.html" class="home-pill">🏠 返回學習中心</a>
+  <span class="header-title">藥物劑量換算系統</span>
   <button class="admin-corner-btn" id="adminCornerBtn" onclick="switchTab('admin')">⚙ 後台管理</button>
 </div>
 <div class="sub-header">中國附醫｜ 恢復室 PACU</div>
